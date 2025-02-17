@@ -2,7 +2,6 @@ import { Box, Button, Typography } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import LoginIcon from "@mui/icons-material/Login";
 
-// src/components/AuthGuard.tsx
 export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, login } = useAuth();
   
@@ -10,7 +9,7 @@ export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children })
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
         <Typography variant="h6" gutterBottom>
-          Please log in to continue
+          Please log in to access this feature
         </Typography>
         <Button
           variant="contained"
