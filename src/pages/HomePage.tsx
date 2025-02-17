@@ -63,8 +63,8 @@ const HomePage = () => {
     loadInitialVirtues();
   }, [loadInitialVirtues]);
 
-  const handleVirtueCreated = (newVirtue: Virtue) => {
-    setVirtues(prev => [newVirtue, ...prev]);
+  const handleVirtueCreated = () => {
+    loadInitialVirtues();    
   };
 
   if (loading) {

@@ -20,10 +20,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { config } from "../config";
 import { getIdFromSub } from "../helpers";
-import type { Virtue } from "../types";
 
 interface CreateVirtueFormProps {
-  onVirtueCreated: (virtue: Virtue) => void;
+  onVirtueCreated: () => void;
   onClose?: () => void;
 }
 
@@ -70,7 +69,8 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
       }
 
       setContent("");
-      onVirtueCreated(data.data);
+      console.log(data);
+      onVirtueCreated();
       onClose?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create virtue");
