@@ -60,12 +60,10 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
   }
 };
 
-export const isProfileComplete = async (
-  user: Auth0User | undefined
-): Promise<boolean> => {
-  if (!user) return false;
+export const isProfileComplete = async (userId: string): Promise<boolean> => {
+  if (!userId) return false;
 
-  const response = await fetch(`${config.API_URL}/api/users/${user.sub}`);
+  const response = await fetch(`${config.API_URL}/api/users/${userId}`);
   const data = await response.json();
   console.log("!!data.data", !!data.data);
   return !!data.data;

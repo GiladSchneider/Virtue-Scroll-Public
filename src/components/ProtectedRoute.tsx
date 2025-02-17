@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { isProfileComplete } from "../helpers";
@@ -21,8 +21,25 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, user, loginWithRedirect } = useAuth0();
   const location = useLocation();
+  const [isComplete, setIsComplete] = useState(false);
+  const [profileCompleteLoading, setProfileCompleteLoading] = useState(true);
 
-  if (isLoading) {
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user?.sub) {
+        return;
+      }
+
+      const isComplete = await isProfileComplete(user.sub);
+
+      setIsComplete(isComplete);
+      setProfileCompleteLoading(false);
+    };
+
+    checkProfile();
+  }, [user?.sub]);
+
+  if (isLoading || profileCompleteLoading) {
     return (
       <Container
         maxWidth="sm"
@@ -112,11 +129,7 @@ const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
     );
   }
 
-  console.log("User", user);
-  console.log("isProfileComplete", isProfileComplete(user));
-  console.log("requireComplete", requireComplete);
-  console.log("location.pathname", location.pathname);
-  if (requireComplete && !isProfileComplete(user)) {
+  if (requireComplete && !isComplete) {
     if (location.pathname !== "/complete-profile") {
       return <Navigate to="/complete-profile" />;
     }
