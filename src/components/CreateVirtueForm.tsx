@@ -15,6 +15,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Virtue } from "../types";
 import { config } from "../config";
+import { useNavigate } from "react-router-dom";
 
 interface CreateVirtueFormProps {
   onVirtueCreated: (virtue: Virtue) => void;
@@ -24,7 +25,8 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
   onVirtueCreated,
 }) => {
   const theme = useTheme();
-  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
+  const navigate = useNavigate();
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +35,7 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
     e.preventDefault();
 
     if (!isAuthenticated) {
-      loginWithRedirect();
+      navigate("/me")
       return;
     }
 

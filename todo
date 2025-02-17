@@ -16,6 +16,7 @@ bug - scroll down on home page then click profile page when not logged in
 bug - sign in
 bug - button at bottom to write does not work
 bug - tweets are not limited to 300 chars
+bug - add favicon, change react + vite + ts in header
 
 devx - code sweep through code and clean up console logs, unnecessary CSS, etc
 

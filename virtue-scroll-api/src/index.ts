@@ -37,6 +37,7 @@ export default {
     router.post('/api/users', (request) => userController.createUser(request));
     router.get('/api/users/:id', (request) => {
       const id = new URL(request.url).pathname.split('/')[3];
+      console.log('ID:', id);
       return userController.getUser(id);
     });
     // 404 handler
