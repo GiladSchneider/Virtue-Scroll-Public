@@ -1,4 +1,5 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   AppBar,
   Toolbar,
@@ -6,87 +7,109 @@ import {
   Container,
   Box,
   IconButton,
+  Button,
   Tooltip,
   useTheme,
   Paper,
-  Button,
-} from "@mui/material";
-import { Home, Person, Create, GitHub } from "@mui/icons-material";
-import ThreePIcon from "@mui/icons-material/ThreeP";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
-import { useAuth0 } from "@auth0/auth0-react";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
+  Dialog,
+  DialogContent,
+  useMediaQuery,
+} from '@mui/material';
+import {
+  Home as HomeIcon,
+  Person as PersonIcon,
+  Create as CreateIcon,
+  GitHub as GitHubIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon,
+  AutoFixHigh as AutoFixHighIcon,
+} from '@mui/icons-material';
+import ThreePIcon from '@mui/icons-material/ThreeP';
+import { CreateVirtueForm } from '../components';
+import { useState } from 'react';
 
 const Layout = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const location = useLocation();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Function to check if a route is active
   const isActiveRoute = (path: string) => location.pathname === path;
 
+  const handleOpenDialog = () => {
+    if (!isAuthenticated) {
+      navigate("/me");
+      return;
+    }
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleVirtueCreated = () => {
+    handleCloseDialog();
+    // You might want to refresh the virtues list here
+  };
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        bgcolor: "grey.50",
-      }}
-    >
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh',
+      bgcolor: 'grey.50'
+    }}>
       {/* Top AppBar */}
-      <AppBar
-        position="fixed"
+      <AppBar 
+        position="fixed" 
         elevation={0}
         sx={{
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           borderBottom: 1,
-          borderColor: "grey.200",
+          borderColor: 'divider',
         }}
       >
-        <Toolbar
-          sx={{
-            px: { xs: 1, sm: 2 },
-            display: "flex",
-            justifyContent: "space-around",
-          }}
-        >
-          <Box>
-            <Tooltip title="Made by Gilad Schneider">
+        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, sm: 4 } }}>
+          {/* Left section */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>            
+            <Tooltip title="Made By Gilad Schneider">
               <IconButton
                 component="a"
                 href="https://www.giladschneider.com"
                 target="_blank"
+                size="small"
               >
                 <AutoFixHighIcon />
               </IconButton>
             </Tooltip>
-
-            {/* GitHub Link */}
             <Tooltip title="View on GitHub">
               <IconButton
                 component="a"
-                href="https://github.com/yourusername/virtue-scroll"
+                href="https://github.com/giladschneider/virtue-scroller"
                 target="_blank"
+                size="small"
               >
-                <GitHub />
+                <GitHubIcon />
               </IconButton>
             </Tooltip>
           </Box>
 
+          {/* Center section - Logo */}
           <Typography
-            variant="h6"
             component={Link}
             to="/"
             sx={{
-              textDecoration: "none",
-              color: "primary.main",
+              textDecoration: 'none',
+              color: 'primary.main',
               fontWeight: 700,
-              letterSpacing: "-0.5px",
-              fontSize: { xs: "1.25rem", sm: "1.5rem" },
-              display: "flex",
-              alignItems: "center",
+              letterSpacing: '-0.5px',
+              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              display: 'flex',
+              alignItems: 'center',
               gap: 1,
             }}
           >
@@ -94,124 +117,140 @@ const Layout = () => {
             <ThreePIcon />
           </Typography>
 
-          {/* Logout Button */}
-          {isAuthenticated && (
-            <Button
-              onClick={() => logout()}
-              variant="contained"
-              color="primary"
-              endIcon={<LogoutIcon />}
-              sx={{ textTransform: "none" }}
-            >
-              Logout
-            </Button>
-          )}
-          {/* Login Button */}
-          {!isAuthenticated && (
-            <Button
-              onClick={() => loginWithRedirect()}
-              variant="contained"
-              color="primary"
-              endIcon={<LoginIcon />}
-              sx={{ textTransform: "none" }}
-            >
-              Login
-            </Button>
-          )}
+          {/* Right section */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {isAuthenticated ? (
+              <Button
+                variant="outlined"
+                onClick={() => logout()}
+                startIcon={<LogoutIcon />}
+                sx={{ 
+                  textTransform: 'none',
+                  fontWeight: 500
+                }}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                onClick={() => loginWithRedirect()}
+                startIcon={<LoginIcon />}
+                sx={{ 
+                  textTransform: 'none',
+                  fontWeight: 500
+                }}
+              >
+                Login
+              </Button>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
 
       {/* Main Content */}
-      <Toolbar />
-      <Container
-        component="main"
-        maxWidth="lg"
-        sx={{
-          flex: 1,
-          py: 3,
-          px: { xs: 1, sm: 2 },
+      <Box 
+        component="main" 
+        sx={{ 
+          flexGrow: 1,
+          pt: '64px', // Height of AppBar
+          minHeight: '100vh'
         }}
       >
-        <Outlet />
-      </Container>
+        <Container maxWidth="lg" sx={{ py: 3 }}>
+          <Outlet />
+        </Container>
+      </Box>
 
-      {/* Bottom Navigation Bar */}
+      {/* Bottom Navigation */}
       <Paper
         elevation={3}
         sx={{
-          position: "fixed",
-          bottom: 5,
-          left: 50,
-          right: 50,
+          position: 'fixed',
+          bottom: 16,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'auto',
+          maxWidth: 320,
+          borderRadius: '50px',
           zIndex: theme.zIndex.appBar,
-          borderRadius: "12px",
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           border: 1,
-          borderColor: "grey.200",
+          borderColor: 'divider',
         }}
       >
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-around",
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            px: 3,
             py: 1,
-            px: 2,
-            maxWidth: "sm",
-            mx: "auto",
+            gap: 3,
           }}
         >
           <Tooltip title="Home">
             <IconButton
               component={Link}
               to="/"
-              color={isActiveRoute("/") ? "primary" : "default"}
+              color={isActiveRoute('/') ? 'primary' : 'default'}
               sx={{
-                transform: isActiveRoute("/") ? "scale(1.5)" : "none",
-                transition: "transform 0.2s",
+                transition: 'all 0.2s',
+                transform: isActiveRoute('/') ? 'scale(1.1)' : 'none',
               }}
             >
-              <Home />
+              <HomeIcon />
             </IconButton>
           </Tooltip>
 
           <Tooltip title="New Virtue">
             <IconButton
-              color="primary"
+              onClick={handleOpenDialog}
               sx={{
-                bgcolor: "primary.main",
-                color: "white",
-                "&:hover": {
-                  bgcolor: "primary.dark",
+                bgcolor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
                 },
-                transform: "scale(1.5)",
+                width: 48,
+                height: 48,
+                transition: 'all 0.2s',
               }}
-              onClick={() => console.log("Create new virtue")}
             >
-              <Create />
+              <CreateIcon />
             </IconButton>
           </Tooltip>
 
-          <Tooltip title={"Profile"}>
-            <Link
-              to={"/me"}
-              style={{ textDecoration: "none", color: "inherit" }}
+          <Tooltip title="Profile">
+            <IconButton
+              component={Link}
+              to="/me"
+              color={isActiveRoute('/me') ? 'primary' : 'default'}
+              sx={{
+                transition: 'all 0.2s',
+                transform: isActiveRoute('/me') ? 'scale(1.1)' : 'none',
+              }}
             >
-              <IconButton
-                color={isActiveRoute("/me") ? "primary" : "default"}
-                sx={{
-                  transform: isActiveRoute("/me") ? "scale(1.5)" : "none",
-                  transition: "transform 0.2s",
-                }}
-              >
-                <Person />
-              </IconButton>
-            </Link>
+              <PersonIcon />
+            </IconButton>
           </Tooltip>
         </Box>
       </Paper>
 
-      {/* Bottom spacing to account for fixed navigation */}
-      <Toolbar sx={{ minHeight: { xs: "64px", sm: "64px" } }} />
+      {/* New Virtue Dialog */}
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleCloseDialog}
+        fullScreen={fullScreen}
+        maxWidth="sm"
+        fullWidth
+        // make paper transparent and too small to tap outside
+        slotProps={{ paper: { sx: { bgcolor: 'transparent', boxShadow: 'none' } } }}
+      >       
+        <DialogContent sx={{ px: 3, pb: 3 }}>
+          <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
