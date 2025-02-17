@@ -1,5 +1,4 @@
 IN PROGRESS:
-enhance - add a bunch of fake data
 enhance - add readme
 enhance - write resume section
 
@@ -23,3 +22,4 @@ enhance - POST methods should require authentication
 enhance - make tweets come in random order
 devx - code sweep through code and clean up console logs, unnecessary CSS, etc
 enhance - remove random selection of tweets - its cool but makes the app untestable by new people
+enhance - add a bunch of fake data
