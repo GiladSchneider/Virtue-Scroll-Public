@@ -45,9 +45,9 @@ const ProfilePage = () => {
           const userData = {
             id: data.data[0].user_id,
             username: data.data[0].username,
-            displayName: data.data[0].display_name,
-            avatarUrl: data.data[0].avatar_url,
-            createdAt: data.data[0].created_at,
+            display_name: data.data[0].display_name,
+            avatar_url: data.data[0].avatar_url,
+            created_at: data.data[0].created_at,
             email: data.data[0].email,
           };
           setUser(userData);
@@ -116,7 +116,7 @@ const ProfilePage = () => {
     );
   }
 
-  const joinDate = new Date(user.createdAt).toLocaleDateString("en-US", {
+  const joinDate = new Date(user.created_at).toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
@@ -151,7 +151,7 @@ const ProfilePage = () => {
                 fontSize: { xs: "2rem", sm: "2.5rem" },
               }}
             >
-              {user.displayName[0]}
+              {user.display_name?.[0] || user.username[0]}
             </Avatar>
 
             <Box
@@ -168,7 +168,7 @@ const ProfilePage = () => {
                   fontSize: { xs: "1.75rem", sm: "2.25rem" },
                 }}
               >
-                {user.displayName}
+                {user.display_name}
               </Typography>
 
               <Typography

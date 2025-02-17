@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { LoginCard, CompleteProfileForm } from "../components";
 import { CircularProgress } from "@mui/material";
-import { isProfileComplete } from "../helpers";
+import { getIdFromSub, isProfileComplete } from "../helpers";
 
 const MyProfile = () => {
   const { isAuthenticated, isLoading, user } = useAuth0();
@@ -12,7 +12,7 @@ const MyProfile = () => {
   useEffect(() => {
     const checkProfileCompletion = async () => {
       if (user && user.sub) {
-        const complete = await isProfileComplete(user.sub);
+        const complete = await isProfileComplete(getIdFromSub(user.sub));
         setIsComplete(complete);
       }
       setIsProfileLoaded(true);

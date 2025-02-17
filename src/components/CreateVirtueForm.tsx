@@ -16,6 +16,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Virtue } from "../types";
 import { config } from "../config";
 import { useNavigate } from "react-router-dom";
+import { getIdFromSub } from "../helpers";
 
 interface CreateVirtueFormProps {
   onVirtueCreated: (virtue: Virtue) => void;
@@ -52,7 +53,7 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
         credentials: "include",
         body: JSON.stringify({
           content: content.trim(),
-          userId: user?.sub,
+          userId: getIdFromSub(user?.sub),
         }),
       });
 

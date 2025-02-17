@@ -2,6 +2,10 @@ import { User as Auth0User } from "@auth0/auth0-react";
 import { User as ourUser, User } from "./types";
 import { config } from "./config";
 
+export const getIdFromSub = (sub: string | undefined): string => {
+  return sub ? sub.split("|")[1] : "";
+}
+
 export const createOrUpdateUser = async (
   auth0User: Auth0User | undefined,
   accessToken: string,
@@ -16,7 +20,7 @@ export const createOrUpdateUser = async (
       },
       body: JSON.stringify({
         ...formData,
-        id: auth0User?.sub,
+        id: getIdFromSub(auth0User?.sub),
       }),
     });
 
@@ -55,9 +59,9 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
     return {
       id: data.data.id,
       username: data.data.username,
-      displayName: data.data.display_name,
-      avatarUrl: data.data.avatar_url,
-      createdAt: data.data.created_at,
+      display_name: data.data.display_name,
+      avatar_url: data.data.avatar_url,
+      created_at: data.data.created_at,
       email: data.data.email,
     };
   } catch (error) {
@@ -68,30 +72,14 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
 
 export const isProfileComplete = async (
   userId: string,
-  accessToken?: string,
 ): Promise<boolean> => {
   try {
-    // Input validation
     if (!userId) {
-      console.warn("isProfileComplete: No userId provided");
       return false;
     }
 
-    // Prepare headers
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-    };
-
-    // Add authorization header if access token is provided
-    if (accessToken) {
-      headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
-    // Make API request
     const response = await fetch(`${config.API_URL}/api/users/${userId}`, {
       method: "GET",
-      headers,
-      credentials: "include",
     });
 
     if (!response.ok) {
@@ -112,14 +100,15 @@ export const isProfileComplete = async (
     }
 
     const user = data.data as User;
+    console.log("isProfileComplete: User data:", user);
     const isComplete = Boolean(
       user.id &&
         user.username?.trim() &&
-        user.displayName?.trim() &&
+        user.display_name?.trim() &&
         user.email?.trim(),
     );
 
-    console.debug(
+    console.log(
       `isProfileComplete: Profile ${isComplete ? "is" : "is not"} complete`,
     );
 
