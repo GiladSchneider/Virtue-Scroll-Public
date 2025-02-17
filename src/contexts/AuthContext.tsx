@@ -48,10 +48,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-      const login = () => {
-    // Use the current application's domain for Cloudflare Access
+  const login = () => {
+    // Construct the login URL with the current URL as the redirect
     const currentUrl = window.location.href;
-    window.location.href = `/cdn-cgi/access/login?redirect_url=${encodeURIComponent(currentUrl)}`;
+    const loginUrl = `https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/login?redirect_url=${encodeURIComponent(currentUrl)}`;
+    window.location.href = loginUrl;
   };
 
   const logout = async () => {
@@ -62,9 +63,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         credentials: 'include'
       });
       
-      // Use the current application's domain for Cloudflare Access logout
+      // Then redirect to Cloudflare Access logout
       const currentUrl = window.location.href;
-      window.location.href = `/cdn-cgi/access/logout?redirect_url=${encodeURIComponent(currentUrl)}`;
+      const logoutUrl = `https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/logout?redirect_url=${encodeURIComponent(currentUrl)}`;
+      window.location.href = logoutUrl;
       
       setUser(null);
     } catch (error) {
