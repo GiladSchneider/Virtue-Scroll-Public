@@ -23,6 +23,10 @@ export class Router {
 		this.add('POST', pattern, handler);
 	}
 
+	put(pattern: string, handler: RouteHandler) {
+		this.add('PUT', pattern, handler);
+	}
+
 	options(pattern: string, handler: RouteHandler) {
 		this.add('OPTIONS', pattern, handler);
 	}

@@ -7,7 +7,7 @@ const environments: Record<string, EnvironmentConfig> = {
     API_URL: 'http://localhost:8787',
   },
   production: {
-    API_URL: 'https://virtue-scroll-api.schneider-gilad.workers.dev',
+    API_URL: 'https://api.virtuescroll.com',
   },
 };
 

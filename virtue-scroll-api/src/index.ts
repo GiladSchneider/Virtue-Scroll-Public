@@ -7,6 +7,14 @@ interface Env {
 	ALLOWED_ORIGIN: string;
 }
 
+interface JWTClaims {
+	email: string;
+	name?: string;
+	sub: string;
+	exp: number;
+	aud: string[];
+}
+
 // Function to get CORS headers based on environment
 const getCorsHeaders = (allowedOrigin: string, request: Request) => {
 	// Get the Origin header from the request
@@ -21,7 +29,6 @@ const getCorsHeaders = (allowedOrigin: string, request: Request) => {
 		'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 		'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
 		'Access-Control-Max-Age': '86400',
-		// Allow credentials if needed for future auth
 		'Access-Control-Allow-Credentials': 'true',
 	};
 };
@@ -30,11 +37,6 @@ export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGIN, request);
 		const db = env.DB;
-		console.log('##############################################');
-		console.log('ENV', env);
-		console.log('DB:', db);
-		console.log('Request:', request);
-		console.log('##############################################');
 
 		// Handle CORS preflight requests
 		if (request.method === 'OPTIONS') {
@@ -51,16 +53,16 @@ export default {
 				const { results } = await db
 					.prepare(
 						`
-          SELECT 
-            v.*,
-            u.username,
-            u.display_name,
-            u.avatar_url
-          FROM virtues v
-          JOIN users u ON v.user_id = u.id
-          ORDER BY v.created_at DESC
-          LIMIT 50
-        `
+							SELECT 
+								v.*,
+								u.username,
+								u.display_name,
+								u.avatar_url
+							FROM virtues v
+							JOIN users u ON v.user_id = u.id
+							ORDER BY v.created_at DESC
+							LIMIT 50
+						`,
 					)
 					.all();
 
@@ -83,7 +85,7 @@ export default {
 							'Content-Type': 'application/json',
 							...corsHeaders,
 						},
-					}
+					},
 				);
 			}
 		});
@@ -95,17 +97,17 @@ export default {
 				const { results } = await db
 					.prepare(
 						`
-          SELECT 
-            v.*,
-            u.username,
-            u.display_name,
-            u.avatar_url
-          FROM virtues v
-          JOIN users u ON v.user_id = u.id
-          WHERE u.username = ?
-          ORDER BY v.created_at DESC
-          LIMIT 50
-        `
+						SELECT 
+							v.*,
+							u.username,
+							u.display_name,
+							u.avatar_url
+						FROM virtues v
+						JOIN users u ON v.user_id = u.id
+						WHERE u.username = ?
+						ORDER BY v.created_at DESC
+						LIMIT 50
+						`,
 					)
 					.bind(username)
 					.all();
@@ -117,6 +119,7 @@ export default {
 					},
 				});
 			} catch (error) {
+				console.error('Error fetching user virtues:', error);
 				return new Response(
 					JSON.stringify({
 						success: false,
@@ -128,7 +131,7 @@ export default {
 							'Content-Type': 'application/json',
 							...corsHeaders,
 						},
-					}
+					},
 				);
 			}
 		});
@@ -143,7 +146,7 @@ export default {
 					return new Response(
 						JSON.stringify({
 							success: false,
-							error: 'Content and userId are required',
+							error: 'Content and userId are required to create a virtue',
 						}),
 						{
 							status: 400,
@@ -151,16 +154,16 @@ export default {
 								'Content-Type': 'application/json',
 								...corsHeaders,
 							},
-						}
+						},
 					);
 				}
 
 				const { success } = await db
 					.prepare(
 						`
-          INSERT INTO virtues (id, content, user_id)
-          VALUES (?, ?, ?)
-        `
+						INSERT INTO virtues (id, content, user_id)
+						VALUES (?, ?, ?)
+						`,
 					)
 					.bind(crypto.randomUUID(), content, userId)
 					.run();
@@ -176,6 +179,7 @@ export default {
 					},
 				});
 			} catch (error) {
+				console.error('Error creating virtue:', error);
 				return new Response(
 					JSON.stringify({
 						success: false,
@@ -187,7 +191,135 @@ export default {
 							'Content-Type': 'application/json',
 							...corsHeaders,
 						},
-					}
+					},
+				);
+			}
+		});
+
+		// Get current user
+		router.get('/api/auth/me', async (request) => {
+			try {
+				// Get JWT from Cloudflare Access
+				const jwtToken = request.headers.get('Cf-Access-Jwt-Assertion');
+				if (!jwtToken) {
+					return new Response(
+						JSON.stringify({
+							success: false,
+							error: 'Unauthorized',
+						}),
+						{
+							status: 401,
+							headers: {
+								'Content-Type': 'application/json',
+								...corsHeaders,
+							},
+						},
+					);
+				}
+
+				// Decode JWT payload
+				const [, payloadBase64] = jwtToken.split('.');
+				const payload = JSON.parse(atob(payloadBase64)) as JWTClaims;
+
+				// Verify JWT and get user info
+				const userInfo = await db.prepare('SELECT * FROM users WHERE email = ?').bind(payload.email).first();
+
+				if (!userInfo) {
+					// Create new user if they don't exist
+					const newUser = {
+						id: crypto.randomUUID(),
+						email: payload.email,
+						username: payload.email.split('@')[0],
+						display_name: payload.name || payload.email.split('@')[0],
+						created_at: new Date().toISOString(),
+					};
+
+					await db
+						.prepare(
+							`
+							INSERT INTO users (id, email, username, display_name, created_at)
+							VALUES (?, ?, ?, ?, ?)
+							`,
+						)
+						.bind(newUser.id, newUser.email, newUser.username, newUser.display_name, newUser.created_at)
+						.run();
+
+					return new Response(JSON.stringify({ success: true, data: newUser }), {
+						headers: {
+							'Content-Type': 'application/json',
+							...corsHeaders,
+						},
+					});
+				}
+
+				return new Response(JSON.stringify({ success: true, data: userInfo }), {
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
+				});
+			} catch (error) {
+				console.error('Auth error:', error);
+				return new Response(
+					JSON.stringify({
+						success: false,
+						error: 'Authentication failed',
+					}),
+					{
+						status: 401,
+						headers: {
+							'Content-Type': 'application/json',
+							...corsHeaders,
+						},
+					},
+				);
+			}
+		});
+
+		// Update user profile
+		router.put('/api/users/:username', async (request) => {
+			try {
+				const jwtToken = request.headers.get('Cf-Access-Jwt-Assertion');
+				if (!jwtToken) throw new Error('Unauthorized');
+
+				// Decode JWT payload
+				const [, payloadBase64] = jwtToken.split('.');
+				const payload = JSON.parse(atob(payloadBase64)) as JWTClaims;
+				
+				const body = await request.json() as { display_name: string; avatar_url?: string };
+				const { display_name, avatar_url } = body;
+
+				const result = await db
+					.prepare(
+						`
+						UPDATE users 
+						SET display_name = ?, avatar_url = ?
+						WHERE email = ?
+						`,
+					)
+					.bind(display_name, avatar_url, payload.email)
+					.run();
+
+				return new Response(JSON.stringify({ success: true }), {
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
+				});
+			} catch (error) {
+				console.error('Profile update error:', error);
+				return new Response(
+					JSON.stringify({
+						success: false,
+						error: 'Failed to update profile',
+					}),
+					{
+						status: 500,
+						headers: {
+							'Content-Type': 'application/json',
+							...corsHeaders,
+						},
+					},
 				);
 			}
 		});
@@ -205,7 +337,7 @@ export default {
 						'Content-Type': 'application/json',
 						...corsHeaders,
 					},
-				}
+				},
 			);
 		});
 
@@ -224,7 +356,7 @@ export default {
 						'Content-Type': 'application/json',
 						...corsHeaders,
 					},
-				}
+				},
 			);
 		}
 	},
