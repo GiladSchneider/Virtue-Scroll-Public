@@ -91,7 +91,6 @@ CREATE TABLE virtues (
 - JWT validation at the edge
 - SQL injection prevention
 - XSS protection via React
-- Rate limiting implemented in Workers
 
 ## Learning Outcomes
 
