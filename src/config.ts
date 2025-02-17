@@ -13,11 +13,11 @@ const environments: Record<string, EnvironmentConfig> = {
 
 const getCurrentEnvironment = (): string => {
   if (typeof window !== "undefined") {
-    if (window.location.hostname === "virtuescroll.com") {
-      return "production";
+    if (window.location.hostname === "localhost") {
+      return "development";
     }
   }
-  return "development";
+  return "production";
 };
 
 export const config: EnvironmentConfig = environments[getCurrentEnvironment()];

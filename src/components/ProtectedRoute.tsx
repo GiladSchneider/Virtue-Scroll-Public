@@ -8,7 +8,6 @@ import {
   Container,
   Box,
   Paper,
-  CircularProgress,
   Stack,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -19,24 +18,8 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, user, loginWithRedirect } = useAuth0();
+  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
   const location = useLocation();
-
-  if (isLoading) {
-    return (
-      <Container
-        maxWidth="sm"
-        sx={{ height: "100%", display: "flex", alignItems: "center" }}
-      >
-        <Box sx={{ width: "100%", textAlign: "center" }}>
-          <CircularProgress />
-          <Typography variant="body1" sx={{ mt: 2 }}>
-            Loading...
-          </Typography>
-        </Box>
-      </Container>
-    );
-  }
 
   if (!isAuthenticated) {
     return (
@@ -114,9 +97,7 @@ const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
 
   if (requireComplete && !isProfileComplete(user)) {
     if (location.pathname !== "/complete-profile") {
-      return (
-        <Navigate to="/complete-profile" state={{ from: location }} replace />
-      );
+      return <Navigate to="/complete-profile" />;
     }
   }
 
