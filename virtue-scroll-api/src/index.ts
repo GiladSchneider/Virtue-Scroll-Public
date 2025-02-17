@@ -8,16 +8,27 @@ interface Env {
 }
 
 // Function to get CORS headers based on environment
-const getCorsHeaders = (allowedOrigin: string) => ({
-	'Access-Control-Allow-Origin': allowedOrigin,
-	'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-	'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-	'Access-Control-Max-Age': '86400',
-});
+const getCorsHeaders = (allowedOrigin: string, request: Request) => {
+	// Get the Origin header from the request
+	const origin = request.headers.get('Origin');
+
+	// If the origin matches our allowed origin, return it
+	// Otherwise return the default allowed origin
+	const responseOrigin = origin && origin === allowedOrigin ? origin : allowedOrigin;
+
+	return {
+		'Access-Control-Allow-Origin': responseOrigin,
+		'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+		'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+		'Access-Control-Max-Age': '86400',
+		// Allow credentials if needed for future auth
+		'Access-Control-Allow-Credentials': 'true',
+	};
+};
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
-		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGIN);
+		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGIN, request);
 
 		// Handle CORS preflight requests
 		if (request.method === 'OPTIONS') {
