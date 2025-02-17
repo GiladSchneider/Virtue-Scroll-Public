@@ -1,10 +1,4 @@
-import {
-  Card,
-  Stack,
-  Avatar,
-  Typography,
-  Box,
-} from "@mui/material";
+import { Card, Stack, Avatar, Typography, Box } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import type { Virtue } from "../types";
 
@@ -14,7 +8,6 @@ interface VirtueCardProps {
 
 const VirtueCard = ({ virtue }: VirtueCardProps) => {
   const navigate = useNavigate();
-  
   const formattedDate = new Date(virtue.created_at).toLocaleDateString(
     "en-US",
     {
@@ -45,14 +38,14 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
       sx={{
         borderRadius: 2,
         width: "100%",
-        cursor: 'pointer',
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {          
-          boxShadow: 3,          
+        cursor: "pointer",
+        transition: "all 0.2s ease-in-out",
+        "&:hover": {
+          boxShadow: 3,
         },
-        '&:active': {
-          transform: 'translateY(0px)',
-        }
+        "&:active": {
+          transform: "translateY(0px)",
+        },
       }}
     >
       <Box sx={{ p: 2 }}>
@@ -70,20 +63,23 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
                 fontWeight: 500,
                 textDecoration: "none",
                 flexShrink: 0,
-                transition: 'transform 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'scale(1.05)',
+                transition: "transform 0.2s ease-in-out",
+                "&:hover": {
+                  transform: "scale(1.05)",
                 },
               }}
             >
               {initial}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems="baseline"
-                sx={{ mb: 0.5 }}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: 1,
+                  mb: 0.5,
+                }}
               >
                 <Link
                   to={`/profile/${username}`}
@@ -91,7 +87,6 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
                   style={{
                     textDecoration: "none",
                     color: "inherit",
-                    maxWidth: "100%",
                   }}
                 >
                   <Typography
@@ -100,13 +95,10 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
                     sx={{
                       fontWeight: 600,
                       color: "text.primary",
-                      transition: 'color 0.2s ease',
+                      transition: "color 0.2s ease",
                       "&:hover": {
                         color: "primary.main",
                       },
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
                     }}
                   >
                     {displayName}
@@ -116,13 +108,17 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
                   variant="caption"
                   sx={{
                     color: "text.secondary",
-                    flexShrink: 0,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    "&::before": {
+                      content: '"•"',
+                      mx: 0.5,
+                    },
                   }}
                 >
-                  • {formattedDate}
+                  {formattedDate}
                 </Typography>
-              </Stack>
-
+              </Box>
               <Typography
                 variant="body1"
                 sx={{
