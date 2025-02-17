@@ -215,7 +215,7 @@ export default {
             VALUES (?, ?, ?, ?, ?, ?)
             `
 					)
-					.bind(id, username, display_name, avatar_url, email, new Date().toISOString())
+					.bind(id, username, display_name, avatar_url || 'todo', email, new Date().toISOString())
 					.run();
 
 				if (!success) {
