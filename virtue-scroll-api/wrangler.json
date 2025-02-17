@@ -17,7 +17,7 @@
 	],
 	"vars": {
 		"ENVIRONMENT": "production",
-		"ALLOWED_ORIGIN": "https://www.virtuescroll.com"
+		"ALLOWED_ORIGIN": "https://virtuescroll.com"
 	},
 	"env": {
 		"development": {
@@ -36,7 +36,7 @@
 		"production": {
 			"vars": {
 				"ENVIRONMENT": "production",
-				"ALLOWED_ORIGIN": "https://www.virtuescroll.com"
+				"ALLOWED_ORIGIN": "https://virtuescroll.com"
 			},
 			"d1_databases": [
 				{
