@@ -46,6 +46,7 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
       displayName: data.data.display_name,
       avatarUrl: data.data.avatar_url,
       createdAt: data.data.created_at,
+      email: data.data.email,
     };
   } catch (error) {
     console.error("Error fetching user:", error);
