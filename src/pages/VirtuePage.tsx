@@ -57,8 +57,8 @@ const VirtuePage = () => {
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: `Virtue by ${virtue?.display_name}`,
-        url: window.location.href,
+        title: `Check out this Virtue by ${virtue?.display_name}`,
+        url: window.location.href
       });
     } catch (err) {
       // Handle share error or user cancellation
