@@ -11,9 +11,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { createOrUpdateUser } from "../helpers";
+import { useNavigate } from "react-router-dom";
 
 const CompleteProfile = () => {
   const { user, getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -30,7 +32,9 @@ const CompleteProfile = () => {
     try {
       const accessToken = await getAccessTokenSilently();
 
-      createOrUpdateUser(user, accessToken, formData);
+      await createOrUpdateUser(user, accessToken, formData);
+      
+      navigate("/me");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {

@@ -34,13 +34,19 @@ export const createOrUpdateUser = async (
 export const getUser = async (id: string): Promise<ourUser | null> => {
   try {
     const response = await fetch(`${config.API_URL}/api/users/${id}`);
+    
+    // Log the response status and headers
+    console.log("Response Status:", response.status);
+    console.log("Response Headers:", response.headers);
+
     const data = await response.json();
+    
+    // Log the entire data response
+    console.log("Response Data:", data);
 
     if (!data.success) {
       throw new Error(data.error || "Failed to fetch user");
-    }
-
-    console.log("data.data", data.data);
+    }    
 
     if (!data.data) {
       return null;
@@ -61,10 +67,28 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
 };
 
 export const isProfileComplete = async (userId: string): Promise<boolean> => {
-  if (!userId) return false;
+  try {
+    if (!userId) {
+      console.log("User ID is missing");
+      return false;
+    }
 
-  const response = await fetch(`${config.API_URL}/api/users/${userId}`);
-  const data = await response.json();
-  console.log("!!data.data", !!data.data);
-  return !!data.data;
+    const response = await fetch(`${config.API_URL}/api/users/${userId}`, {
+      credentials: 'include' 
+    });
+
+    if (!response.ok) {
+      console.log("API response not ok:", response.status);
+      return false;
+    }
+
+    const data = await response.json();
+    console.log("Profile check response:", data);
+
+    return data.success && data.data !== null;
+
+  } catch (error) {
+    console.log("Error checking profile:", error);
+    return false;
+  }
 };

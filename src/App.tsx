@@ -6,7 +6,6 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import MyProfile from "./pages/MyProfile";
 import CompleteProfile from "./pages/CompleteProfile";
-import ProtectedRoute from "./components/ProtectedRoute";
 import { Auth0Provider } from "@auth0/auth0-react";
 
 const theme = createTheme({
@@ -30,7 +29,7 @@ function App() {
       domain="dev-6q6gfnsktyxcf0bj.us.auth0.com"
       clientId="2ykY7uEWmiS0SVkcMO8gC957upyy3iEJ"
       authorizationParams={{
-        redirect_uri: window.location.origin,
+        redirect_uri: window.location.origin + "/me",
         audience: "https://dev-6q6gfnsktyxcf0bj.us.auth0.com/api/v2/",
         scope: "read:current_user update:current_user_metadata",
       }}
@@ -40,24 +39,10 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
-              <Route
-                path="/complete-profile"
-                element={
-                  <ProtectedRoute requireComplete={false}>
-                    <CompleteProfile />
-                  </ProtectedRoute>
-                }
-              />
+              <Route index element={<HomePage />} />              
               <Route path="/profile/:username" element={<ProfilePage />} />
-              <Route
-                path="/me"
-                element={
-                  <ProtectedRoute requireComplete={true}>
-                    <MyProfile />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/me" element={<MyProfile />} />
+              <Route path="/complete-profile" element={<CompleteProfile />} />
               <Route path="*" element={<div>Not found</div>} />
             </Route>
           </Routes>

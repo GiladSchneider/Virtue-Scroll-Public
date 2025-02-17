@@ -68,4 +68,4 @@ INSERT INTO virtues (id, content, user_id, created_at) VALUES
 ('v18', 'Finally understanding the beauty of functional programming', 'u6', '2024-02-01 13:45:00'),
 ('v19', 'Remember to take breaks while coding. Your brain needs it!', 'u6', '2024-02-03 10:55:00'),
 ('v20', 'Just solved a tricky bug that took 3 days. Never give up!', 'u6', '2024-02-04 16:30:00'),
-('v21', 'Learning AWS has opened up so many possibilities!', 'u6', '2024-02-05 14:20:00');x
+('v21', 'Learning AWS has opened up so many possibilities!', 'u6', '2024-02-05 14:20:00');

@@ -87,17 +87,17 @@ export default {
 				const { results } = await db
 					.prepare(
 						`
-            SELECT 
-              v.*,
-              u.username,
-              u.display_name,
-              u.avatar_url
-            FROM virtues v
-            JOIN users u ON v.user_id = u.id
-            WHERE u.username = ?
-            ORDER BY v.created_at DESC
-            LIMIT 50
-            `
+						SELECT 
+						v.*,
+						u.username,
+						u.display_name,
+						u.avatar_url
+						FROM virtues v
+						JOIN users u ON v.user_id = u.id
+						WHERE u.username = ?
+						ORDER BY v.created_at DESC
+						LIMIT 50
+						`
 					)
 					.bind(username)
 					.all();
@@ -151,9 +151,9 @@ export default {
 				const { success } = await db
 					.prepare(
 						`
-            INSERT INTO virtues (id, content, user_id)
-            VALUES (?, ?, ?)
-            `
+						INSERT INTO virtues (id, content, user_id)
+						VALUES (?, ?, ?)
+						`
 					)
 					.bind(crypto.randomUUID(), content, userId)
 					.run();
@@ -211,9 +211,9 @@ export default {
 				const { success } = await db
 					.prepare(
 						`
-            INSERT INTO users (id, username, display_name, avatar_url, email, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-            `
+						INSERT INTO users (id, username, display_name, avatar_url, email, created_at)
+						VALUES (?, ?, ?, ?, ?, ?)
+            			`
 					)
 					.bind(id, username, display_name, avatar_url || 'temp4', email, new Date().toISOString())
 					.run();
@@ -250,19 +250,19 @@ export default {
 		router.get('/api/users/:id', async (request) => {
 			try {
 				const id = new URL(request.url).pathname.split('/')[3];
-				const { results } = await db
+				const results  = await db
 					.prepare(
 						`
-            SELECT 
-              *
-            FROM users
-            WHERE id = ?
-            `
+						SELECT 
+						*
+						FROM users
+						WHERE id = ?
+						`
 					)
 					.bind(id)
-					.all();
+					.first();
 
-				return new Response(JSON.stringify({ success: true, data: results[0] }), {
+				return new Response(JSON.stringify({ success: true, data: results }), {
 					headers: {
 						'Content-Type': 'application/json',
 						...corsHeaders,
