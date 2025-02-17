@@ -40,6 +40,8 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
       throw new Error(data.error || "Failed to fetch user");
     }
 
+    console.log(data.data);
+
     return {
       id: data.data.id,
       username: data.data.username,
