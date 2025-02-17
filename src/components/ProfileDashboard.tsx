@@ -166,7 +166,7 @@ const ProfileDashboard = () => {
         </Card>
 
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-          Your Virtues
+        {virtues.length === 0 ? 'No Virtues' : 'Your Virtues'}
         </Typography>
         <VirtueList virtues={virtues} />
       </Box>

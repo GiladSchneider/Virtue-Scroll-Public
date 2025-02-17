@@ -1,59 +1,66 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import {
+  Container,
   Box,
+  Card,
+  CardContent,
   Typography,
   Avatar,
-  CircularProgress,
-  Chip,
-  Fade,
-  Paper,
-  Container,
-  useTheme,
-  useMediaQuery,
   Stack,
+  Chip,
+  Skeleton,
+  Divider,
+  useTheme,
+  Alert,
 } from "@mui/material";
-import { CalendarMonth } from "@mui/icons-material";
+import {
+  CalendarMonth as CalendarIcon,
+  Campaign as CampaignIcon,
+  PersonOutline as PersonIcon,
+} from "@mui/icons-material";
 import { VirtueList } from "../components";
 import { Virtue, User } from "../types";
 import { config } from "../config";
-import CampaignIcon from "@mui/icons-material/Campaign";
 
 const ProfilePage = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { username } = useParams<{ username: string }>();
-  const [virtues, setVirtues] = useState<Virtue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [virtues, setVirtues] = useState<Virtue[]>([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
+      if (!username) return;
+
       try {
         setLoading(true);
-        const response = await fetch(
-          `${config.API_URL}/api/users/${username}/virtues`
+
+        // First, fetch the user data
+        const userResponse = await fetch(
+          `${config.API_URL}/api/users/${username}`,
         );
-        const data = await response.json();
+        const userData = await userResponse.json();
 
-        if (!data.success) {
-          throw new Error(data.error || "Failed to fetch profile data");
+        if (!userData.success) {
+          throw new Error(userData.error || "Failed to fetch user data");
         }
 
-        if (data.data.length > 0) {
-          const userData = {
-            id: data.data[0].user_id,
-            username: data.data[0].username,
-            display_name: data.data[0].display_name,
-            avatar_url: data.data[0].avatar_url,
-            created_at: data.data[0].created_at,
-            email: data.data[0].email,
-          };
-          setUser(userData);
+        setUser(userData.data);
+
+        // Then fetch their virtues
+        const virtuesResponse = await fetch(
+          `${config.API_URL}/api/users/${username}/virtues`,
+        );
+        const virtuesData = await virtuesResponse.json();
+
+        if (!virtuesData.success) {
+          throw new Error(virtuesData.error || "Failed to fetch virtues");
         }
 
-        setVirtues(data.data);
+        setVirtues(virtuesData.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -61,58 +68,41 @@ const ProfilePage = () => {
       }
     };
 
-    if (username) {
-      fetchProfileData();
-    }
+    fetchProfileData();
   }, [username]);
 
+  if (!username) {
+    return <Navigate to="/" replace />;
+  }
+
+  // centered circular progress
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "50vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
+      <Container maxWidth="md">
+        <Box sx={{ mt: 4, textAlign: "center" }}>
+          <Skeleton variant="circular" width={40} height={40} />
+        </Box>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "50vh",
-          p: 3,
-        }}
-      >
-        <Typography color="error" variant="h6" align="center">
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Alert severity="error" sx={{ borderRadius: 2 }}>
           {error}
-        </Typography>
-      </Box>
+        </Alert>
+      </Container>
     );
   }
 
   if (!user) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "50vh",
-        }}
-      >
-        <Typography variant="h6" color="text.secondary">
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Alert severity="warning" sx={{ borderRadius: 2 }}>
           User not found
-        </Typography>
-      </Box>
+        </Alert>
+      </Container>
     );
   }
 
@@ -122,105 +112,87 @@ const ProfilePage = () => {
   });
 
   return (
-    <Fade in timeout={500}>
-      <Container maxWidth="md" sx={{ pt: 3, pb: 6 }}>
-        <Paper
+    <Container maxWidth="md">
+      <Box sx={{ mt: 4, mb: 6 }}>
+        <Card
           elevation={0}
           sx={{
             mb: 4,
-            p: { xs: 2, sm: 4 },
             borderRadius: 2,
-            bgcolor: "background.paper",
             border: 1,
             borderColor: "divider",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: isMobile ? "column" : "row",
-              alignItems: isMobile ? "center" : "flex-start",
-              gap: 3,
-            }}
-          >
-            <Avatar
-              sx={{
-                width: { xs: 80, sm: 100 },
-                height: { xs: 80, sm: 100 },
-                bgcolor: "primary.main",
-                fontSize: { xs: "2rem", sm: "2.5rem" },
-              }}
-            >
-              {user.display_name?.[0] || user.username[0]}
-            </Avatar>
-
-            <Box
-              sx={{
-                flex: 1,
-                textAlign: isMobile ? "center" : "left",
-              }}
-            >
-              <Typography
-                variant="h4"
+          <CardContent sx={{ p: 4 }}>
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 3 }}>
+              <Avatar
                 sx={{
-                  fontWeight: 700,
-                  mb: 0.5,
-                  fontSize: { xs: "1.75rem", sm: "2.25rem" },
+                  width: 80,
+                  height: 80,
+                  bgcolor: theme.palette.primary.main,
+                  fontSize: "2rem",
                 }}
               >
+                {user.display_name?.[0]}
+              </Avatar>
+
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  {user.display_name}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  sx={{ mb: 2 }}
+                >
+                  @{user.username}
+                </Typography>
+
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                  <Chip
+                    icon={<CalendarIcon />}
+                    label={`Joined ${joinDate}`}
+                    variant="outlined"
+                    size="small"
+                  />
+                  <Chip
+                    icon={<CampaignIcon />}
+                    label={`${virtues.length} ${
+                      virtues.length === 1 ? "Virtue" : "Virtues"
+                    }`}
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                  />
+                </Stack>
+              </Box>
+            </Box>
+
+            <Divider sx={{ my: 3 }} />
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <PersonIcon color="action" />
+              <Typography variant="body2" color="text.secondary">
                 {user.display_name}
               </Typography>
-
-              <Typography
-                variant="subtitle1"
-                color="text.secondary"
-                sx={{ mb: 2 }}
-              >
-                @{user.username}
-              </Typography>
-
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={1}
-                sx={{
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: 1,
-                }}
-              >
-                <Chip
-                  icon={<CalendarMonth sx={{ fontSize: 16 }} />}
-                  label={`Joined ${joinDate}`}
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    borderRadius: 1,
-                    "& .MuiChip-label": { px: 1 },
-                  }}
-                />
-                <Chip
-                  icon={<CampaignIcon sx={{ fontSize: 16 }} />}
-                  label={`${virtues.length} ${
-                    virtues.length === 1 ? "Virtue" : "Virtues"
-                  }`}
-                  variant="outlined"
-                  color="secondary"
-                  size="small"
-                  sx={{
-                    borderRadius: 1,
-                    "& .MuiChip-label": { px: 1 },
-                  }}
-                />
-              </Stack>
             </Box>
-          </Box>
-        </Paper>
+          </CardContent>
+        </Card>
 
-        <Box sx={{ mb: 2, px: { xs: 1, sm: 2 } }}>
-          <VirtueList virtues={virtues} />
-        </Box>
-      </Container>
-    </Fade>
+        {virtues.length > 0 ? (
+          <>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+              Virtues
+            </Typography>
+            <VirtueList virtues={virtues} />
+          </>
+        ) : (
+          <Alert severity="info" sx={{ borderRadius: 2 }}>
+            {user.display_name} hasn't shared any virtues yet
+          </Alert>
+        )}
+      </Box>
+    </Container>
   );
 };
 
