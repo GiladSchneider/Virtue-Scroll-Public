@@ -78,7 +78,7 @@ const CompleteProfileForm = () => {
       
       setSuccess(true);
       setTimeout(() => {
-        navigate('/me');
+        navigate('/'); 
       }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update profile');

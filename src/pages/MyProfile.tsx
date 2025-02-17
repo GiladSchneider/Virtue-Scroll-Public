@@ -4,7 +4,8 @@ import { LoginCard, CompleteProfileForm } from "../components";
 import { CircularProgress } from "@mui/material";
 import { getIdFromSub, isProfileComplete } from "../helpers";
 
-const MyProfile = () => {
+const MyProfile = () => {  
+  window.scrollTo({ top: 0, left: 0})
   const { isAuthenticated, isLoading, user } = useAuth0();
   const [isProfileLoaded, setIsProfileLoaded] = useState<boolean>(false);
   const [isComplete, setIsComplete] = useState<boolean>(false);

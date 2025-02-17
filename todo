@@ -1,5 +1,5 @@
 IN PROGRESS:
-bug - after signing in, should auto redirect to "complete-profile" page, not home. Also, button should say "complete profile to tweet"
+
 
 
 TODO:
@@ -25,3 +25,4 @@ And call it a day when the time comes!
 
 CLOSED:
 enhance - get user info from jwt and use that to populate User info if possible (NOT POSSIBLE)
+bug - after signing in, should auto redirect to "complete-profile" page, not home. Also, button should say "complete profile to tweet"
