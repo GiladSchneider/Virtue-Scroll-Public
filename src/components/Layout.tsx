@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   AppBar,
@@ -30,30 +30,15 @@ import { useState } from "react";
 
 const Layout = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const location = useLocation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Function to check if a route is active
   const isActiveRoute = (path: string) => location.pathname === path;
 
-  const handleOpenDialog = () => {
-    if (!isAuthenticated) {
-      navigate("/me");
-      return;
-    }
-    setIsDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-  };
-
   const handleVirtueCreated = () => {
-    handleCloseDialog();
-    // You might want to refresh the virtues list here
+    setIsDialogOpen(false);
   };
 
   return (
@@ -120,7 +105,7 @@ const Layout = () => {
           </Typography>
 
           {/* Right section */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             {isAuthenticated ? (
               <Button
                 variant="outlined"
@@ -207,7 +192,7 @@ const Layout = () => {
 
           <Tooltip title="New Virtue">
             <IconButton
-              onClick={handleOpenDialog}
+              onClick={() => setIsDialogOpen(true)}
               sx={{
                 bgcolor: "primary.main",
                 color: "white",
@@ -242,11 +227,10 @@ const Layout = () => {
       {/* New Virtue Dialog */}
       <Dialog
         open={isDialogOpen}
-        onClose={handleCloseDialog}
+        onClose={() => setIsDialogOpen(false)}
         fullScreen={fullScreen}
         maxWidth="sm"
         fullWidth
-        // make paper transparent and too small to tap outside
         slotProps={{
           paper: { sx: { bgcolor: "transparent", boxShadow: "none" } },
         }}

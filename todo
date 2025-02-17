@@ -3,6 +3,7 @@ enhance - add a bunch of fake data
 enhance - add readme
 enhance - write resume section
 devx - code sweep through code and clean up console logs, unnecessary CSS, etc
+enhance - remove random selection of tweets - its cool but makes the app untestable by new people
 
 TODO:
 feature - Add ability to search tweets

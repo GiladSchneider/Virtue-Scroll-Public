@@ -4,7 +4,6 @@ import { Layout } from "./components";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import MyProfile from "./pages/MyProfile";
-import CompleteProfile from "./pages/CompleteProfile";
 import VirtuePage from "./pages/VirtuePage";
 import { Auth0Provider } from "@auth0/auth0-react";
 
@@ -43,8 +42,7 @@ function App() {
               <Route path="/profile/:username" element={<ProfilePage />} />
               <Route path="/virtue/:virtueId" element={<VirtuePage />} />
               <Route path="/me" element={<MyProfile />} />
-              <Route path="/complete-profile" element={<CompleteProfile />} />
-              <Route path="*" element={<div>Not found</div>} />
+              <Route path="*" element={<HomePage />} />
             </Route>
           </Routes>
         </BrowserRouter>

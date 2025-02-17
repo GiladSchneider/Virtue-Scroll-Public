@@ -34,7 +34,7 @@ export class VirtueService {
             u.avatar_url
           FROM virtues v
           JOIN users u ON v.user_id = u.id
-          ORDER BY RANDOM()
+          ORDER BY v.created_at DESC
           LIMIT 50
         `
 			)

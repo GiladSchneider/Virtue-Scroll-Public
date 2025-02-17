@@ -43,96 +43,90 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
         "&:hover": {
           boxShadow: 3,
         },
-        "&:active": {
-          transform: "translateY(0px)",
-        },
       }}
     >
       <Box sx={{ p: 2 }}>
-        <Stack spacing={2}>
-          <Stack direction="row" spacing={2} alignItems="flex-start">
-            <Avatar
-              component={Link}
-              to={`/profile/${username}`}
-              onClick={handleUserClick}
+        <Stack direction="row" spacing={2}>
+          <Avatar
+            component={Link}
+            to={`/profile/${username}`}
+            onClick={handleUserClick}
+            sx={{
+              bgcolor: "primary.main",
+              width: 40,
+              height: 40,
+              fontSize: "1.125rem",
+              fontWeight: 500,
+              textDecoration: "none",
+              flexShrink: 0,
+              transition: "transform 0.2s ease-in-out",
+              "&:hover": {
+                transform: "scale(1.05)",
+              },
+            }}
+          >
+            {initial}
+          </Avatar>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Box
               sx={{
-                bgcolor: "primary.main",
-                width: 40,
-                height: 40,
-                fontSize: "1.125rem",
-                fontWeight: 500,
-                textDecoration: "none",
-                flexShrink: 0,
-                transition: "transform 0.2s ease-in-out",
-                "&:hover": {
-                  transform: "scale(1.05)",
-                },
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: 1,
+                mb: 0.5,
               }}
             >
-              {initial}
-            </Avatar>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  gap: 1,
-                  mb: 0.5,
+              <Link
+                to={`/profile/${username}`}
+                onClick={handleUserClick}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
                 }}
               >
-                <Link
-                  to={`/profile/${username}`}
-                  onClick={handleUserClick}
-                  style={{
-                    textDecoration: "none",
-                    color: "inherit",
-                  }}
-                >
-                  <Typography
-                    variant="subtitle1"
-                    component="span"
-                    sx={{
-                      fontWeight: 600,
-                      color: "text.primary",
-                      transition: "color 0.2s ease",
-                      "&:hover": {
-                        color: "primary.main",
-                      },
-                    }}
-                  >
-                    {displayName}
-                  </Typography>
-                </Link>
                 <Typography
-                  variant="caption"
+                  variant="subtitle1"
+                  component="span"
                   sx={{
-                    color: "text.secondary",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    "&::before": {
-                      content: '"•"',
-                      mx: 0.5,
+                    fontWeight: 600,
+                    color: "text.primary",
+                    transition: "color 0.2s ease",
+                    "&:hover": {
+                      color: "primary.main",
                     },
                   }}
                 >
-                  {formattedDate}
+                  {displayName}
                 </Typography>
-              </Box>
+              </Link>
               <Typography
-                variant="body1"
+                variant="caption"
                 sx={{
-                  fontSize: "1rem",
-                  lineHeight: 1.6,
-                  color: "text.primary",
-                  overflow: "hidden",
-                  wordWrap: "break-word",
+                  color: "text.secondary",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  "&::before": {
+                    content: '"•"',
+                    mx: 0.5,
+                  },
                 }}
               >
-                {virtue.content}
+                {formattedDate}
               </Typography>
             </Box>
-          </Stack>
+            <Typography
+              variant="body1"
+              sx={{
+                fontSize: "1rem",
+                lineHeight: 1.6,
+                color: "text.primary",
+                wordWrap: "break-word",
+              }}
+            >
+              {virtue.content}
+            </Typography>
+          </Box>
         </Stack>
       </Box>
     </Card>

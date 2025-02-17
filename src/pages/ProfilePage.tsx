@@ -10,14 +10,12 @@ import {
   Stack,
   Chip,
   Skeleton,
-  Divider,
   useTheme,
   Alert,
 } from "@mui/material";
 import {
   CalendarMonth as CalendarIcon,
   Campaign as CampaignIcon,
-  PersonOutline as PersonIcon,
 } from "@mui/icons-material";
 import { VirtueList } from "../components";
 import { Virtue, User } from "../types";
@@ -89,7 +87,7 @@ const ProfilePage = () => {
   }, [username]);
 
   if (!username) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" />;
   }
 
   if (loading) {
@@ -127,7 +125,6 @@ const ProfilePage = () => {
     <Container maxWidth="md">
       <Box sx={{ mt: 4, mb: 6 }}>
         <Card
-          elevation={0}
           sx={{
             mb: 4,
             borderRadius: 2,
@@ -179,15 +176,6 @@ const ProfilePage = () => {
                 </Stack>
               </Box>
             </Box>
-
-            <Divider sx={{ my: 3 }} />
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <PersonIcon color="action" />
-              <Typography variant="body2" color="text.secondary">
-                {user.display_name}
-              </Typography>
-            </Box>
           </CardContent>
         </Card>
 
@@ -212,7 +200,6 @@ const ProfileSkeleton = () => (
   <Container maxWidth="md">
     <Box sx={{ mt: 4, mb: 6 }}>
       <Card
-        elevation={0}
         sx={{
           mb: 4,
           borderRadius: 2,
@@ -231,18 +218,17 @@ const ProfileSkeleton = () => (
               </Box>
             </Box>
           </Box>
-          <Divider sx={{ my: 3 }} />
-          <Skeleton variant="text" width="70%" />
         </CardContent>
       </Card>
-
-      <Skeleton variant="text" width="20%" height={32} sx={{ mb: 2 }} />
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+        Virtues
+      </Typography>
       <Stack spacing={2}>
         {[1, 2, 3].map((i) => (
           <Skeleton
             key={i}
             variant="rectangular"
-            height={120}
+            height={80}
             sx={{ borderRadius: 2 }}
           />
         ))}

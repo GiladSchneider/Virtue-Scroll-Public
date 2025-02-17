@@ -143,7 +143,6 @@ const VirtuePage = () => {
 
         {/* Main Content */}
         <Card
-          elevation={0}
           sx={{
             borderRadius: 2,
             border: 1,

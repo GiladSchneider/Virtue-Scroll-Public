@@ -8,14 +8,9 @@ import {
   Typography,
   CircularProgress,
   Alert,
-  IconButton,
   useTheme,
 } from "@mui/material";
-import {
-  Campaign as CampaignIcon,
-  Close as CloseIcon,
-  AccountBalance,
-} from "@mui/icons-material";
+import { Campaign as CampaignIcon, AccountBalance } from "@mui/icons-material";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { config } from "../config";
@@ -23,14 +18,12 @@ import { getIdFromSub } from "../helpers";
 
 interface CreateVirtueFormProps {
   onVirtueCreated: () => void;
-  onClose?: () => void;
 }
 
 const MAX_LENGTH = 300;
 
 const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
   onVirtueCreated,
-  onClose,
 }) => {
   const theme = useTheme();
   const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
@@ -60,7 +53,6 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        credentials: "include",
         body: JSON.stringify({
           content: trimmedContent,
           userId: getIdFromSub(user?.sub),
@@ -73,9 +65,7 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
       }
 
       setContent("");
-      console.log(data);
       onVirtueCreated();
-      onClose?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create virtue");
     } finally {
@@ -88,7 +78,6 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
 
   return (
     <Card
-      elevation={0}
       sx={{
         border: 1,
         borderColor: "divider",
@@ -113,11 +102,6 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
           <Typography variant="h6" color="text.secondary">
             Share a Thought
           </Typography>
-          {onClose && (
-            <IconButton onClick={onClose} size="small">
-              <CloseIcon />
-            </IconButton>
-          )}
         </Box>
 
         <form onSubmit={handleSubmit}>

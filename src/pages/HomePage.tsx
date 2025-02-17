@@ -6,19 +6,17 @@ import { config } from "../config";
 
 const HomePage = () => {
   const [virtues, setVirtues] = useState<Virtue[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const fetchVirtues = useCallback(async () => {
     try {
       const response = await fetch(`${config.API_URL}/api/virtues`);
       const data = await response.json();
-
       if (!data.success) {
         throw new Error(data.error || "Failed to fetch virtues");
       }
-
       return data.data;
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -26,48 +24,51 @@ const HomePage = () => {
     }
   }, []);
 
-  const loadInitialVirtues = useCallback(async () => {
+  const loadVirtues = useCallback(async () => {
+    if (loading) return;
+
     setLoading(true);
-    const initialVirtues = await fetchVirtues();
-    setVirtues(initialVirtues);
+    const fetchedVirtues = await fetchVirtues();
+    setVirtues(fetchedVirtues);
     setLoading(false);
-  }, [fetchVirtues]);
-
-  const loadMoreVirtues = useCallback(async () => {
-    if (isLoadingMore) return;
-
-    setIsLoadingMore(true);
-    const newVirtues = await fetchVirtues();
-    setVirtues((prev) => [...prev, ...newVirtues]);
-    setIsLoadingMore(false);
-  }, [isLoadingMore, fetchVirtues]);
+    setInitialLoad(false);
+  }, [fetchVirtues, loading]);
 
   // Infinite scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      // Check if user is near the bottom of the page
       if (
         window.innerHeight + document.documentElement.scrollTop + 100 >=
         document.documentElement.offsetHeight
       ) {
-        loadMoreVirtues();
+        // Add more virtues when scrolling
+        const loadMore = async () => {
+          if (loading) return;
+          setLoading(true);
+          const newVirtues = await fetchVirtues();
+          setVirtues((prev) => [...prev, ...newVirtues]);
+          setLoading(false);
+        };
+        loadMore();
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [loadMoreVirtues]);
+  }, [fetchVirtues, loading]);
 
   // Initial load
   useEffect(() => {
-    loadInitialVirtues();
-  }, [loadInitialVirtues]);
+    if (initialLoad) {
+      loadVirtues();
+    }
+  }, [loadVirtues, initialLoad]);
 
   const handleVirtueCreated = () => {
-    loadInitialVirtues();
+    loadVirtues();
   };
 
-  if (loading) {
+  if (initialLoad) {
     return (
       <Box
         display="flex"
@@ -106,7 +107,7 @@ const HomePage = () => {
       <Box sx={{ maxWidth: 600, mx: "auto", position: "relative" }}>
         <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
         <VirtueList virtues={virtues} />
-        {isLoadingMore && (
+        {loading && (
           <Box display="flex" justifyContent="center" mt={2}>
             <CircularProgress size={30} thickness={4} />
           </Box>
