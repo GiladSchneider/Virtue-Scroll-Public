@@ -8,7 +8,6 @@ import {
   IconButton,
   Tooltip,
   useTheme,
-  useMediaQuery,
   Paper
 } from '@mui/material';
 import { Home, Person, Create, GitHub } from '@mui/icons-material';
@@ -17,7 +16,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 const Layout = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+//   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const location = useLocation();
 
   // Function to check if a route is active
