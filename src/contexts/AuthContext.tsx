@@ -1,3 +1,4 @@
+// src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { config } from '../config';
 
@@ -46,8 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = () => {
-    // Redirect to Cloudflare Access login page
-    window.location.href = `${config.API_URL}/auth/login`;
+    const loginUrl = 'https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/login/virtuescroll.com';
+    window.location.href = loginUrl;
   };
 
   const logout = async () => {

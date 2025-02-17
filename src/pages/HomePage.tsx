@@ -12,7 +12,9 @@ const HomePage = () => {
 
   const fetchVirtues = useCallback(async () => {
     try {
-      const response = await fetch(`${config.API_URL}/api/virtues`);
+      const response = await fetch(`${config.API_URL}/api/virtues`, {
+        credentials: 'include'
+      });
       const data = await response.json();
       
       if (!data.success) {

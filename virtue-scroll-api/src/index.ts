@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { requireAuth } from './auth';
 import { Router } from './router';
 
 interface Env {
@@ -47,21 +48,21 @@ export default {
 
 		const router = new Router();
 
-		// Get all virtues
+		// Get all virtues - no auth required
 		router.get('/api/virtues', async () => {
 			try {
 				const { results } = await db
 					.prepare(
 						`
-							SELECT 
-								v.*,
-								u.username,
-								u.display_name,
-								u.avatar_url
-							FROM virtues v
-							JOIN users u ON v.user_id = u.id
-							ORDER BY v.created_at DESC
-							LIMIT 50
+						SELECT 
+							v.*,
+							u.username,
+							u.display_name,
+							u.avatar_url
+						FROM virtues v
+						JOIN users u ON v.user_id = u.id
+						ORDER BY v.created_at DESC
+						LIMIT 50
 						`,
 					)
 					.all();
@@ -90,7 +91,7 @@ export default {
 			}
 		});
 
-		// Get virtues by user
+		// Get virtues by user - no auth required
 		router.get('/api/users/:username/virtues', async (request) => {
 			try {
 				const username = new URL(request.url).pathname.split('/')[3];
@@ -119,7 +120,6 @@ export default {
 					},
 				});
 			} catch (error) {
-				console.error('Error fetching user virtues:', error);
 				return new Response(
 					JSON.stringify({
 						success: false,
@@ -136,8 +136,24 @@ export default {
 			}
 		});
 
-		// Create new virtue
+		// Auth login endpoint
+		router.get('/auth/login', async (request) => {
+			return Response.redirect(`https://${request.headers.get('host')}/cdn-cgi/access/login`, 302);
+		});
+
+		// Auth logout endpoint
+		router.post('/auth/logout', async (request) => {
+			return Response.redirect(`https://${request.headers.get('host')}/cdn-cgi/access/logout`, 302);
+		});
+
+		// Create new virtue - requires auth
 		router.post('/api/virtues', async (request) => {
+			// Check authentication
+			const authResult = await requireAuth(request);
+			if (authResult instanceof Response) {
+				return authResult;
+			}
+
 			try {
 				const body = (await request.json()) as { content: string; userId: string };
 				const { content, userId } = body;
@@ -146,7 +162,7 @@ export default {
 					return new Response(
 						JSON.stringify({
 							success: false,
-							error: 'Content and userId are required to create a virtue',
+							error: 'Content and userId are required',
 						}),
 						{
 							status: 400,
@@ -179,7 +195,6 @@ export default {
 					},
 				});
 			} catch (error) {
-				console.error('Error creating virtue:', error);
 				return new Response(
 					JSON.stringify({
 						success: false,
@@ -285,8 +300,8 @@ export default {
 				// Decode JWT payload
 				const [, payloadBase64] = jwtToken.split('.');
 				const payload = JSON.parse(atob(payloadBase64)) as JWTClaims;
-				
-				const body = await request.json() as { display_name: string; avatar_url?: string };
+
+				const body = (await request.json()) as { display_name?: string; avatar_url?: string };
 				const { display_name, avatar_url } = body;
 
 				const result = await db

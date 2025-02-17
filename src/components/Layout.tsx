@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   AppBar, 
   Toolbar, 
@@ -13,11 +13,13 @@ import {
 import { Home, Person, Create, GitHub } from '@mui/icons-material';
 import ThreePIcon from '@mui/icons-material/ThreeP';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import { useAuth } from '../contexts/AuthContext';
 
 const Layout = () => {
   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isAuthenticated, user, login } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Function to check if a route is active
   const isActiveRoute = (path: string) => location.pathname === path;
@@ -152,19 +154,24 @@ const Layout = () => {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Profile">
-            <IconButton 
-              component={Link} 
-              to="/profile/johndoe"
-              color={isActiveRoute('/profile/johndoe') ? 'primary' : 'default'}
-              sx={{ 
-                transform: isActiveRoute('/profile/johndoe') ? 'scale(1.5)' : 'none',
-                transition: 'transform 0.2s'
-              }}
-            >
-              <Person />
-            </IconButton>
-          </Tooltip>
+          <Tooltip title={isAuthenticated ? "Profile" : "Sign In"}>
+      <IconButton 
+        onClick={() => {
+          if (isAuthenticated && user) {
+            navigate(`/profile/${user.username}`);
+          } else {
+            login();
+          }
+        }}
+        color={isActiveRoute('/profile') ? 'primary' : 'default'}
+        sx={{ 
+          transform: isActiveRoute('/profile') ? 'scale(1.5)' : 'none',
+          transition: 'transform 0.2s'
+        }}
+      >
+        <Person />
+      </IconButton>
+    </Tooltip>
         </Box>
       </Paper>
 

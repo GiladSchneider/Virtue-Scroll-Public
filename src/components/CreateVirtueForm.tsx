@@ -1,3 +1,4 @@
+// CreateVirtueForm.tsx
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -11,6 +12,8 @@ import {
 } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import LoginIcon from '@mui/icons-material/Login';
+import { useAuth } from '../contexts/AuthContext';
 import { Virtue } from '../types';
 import { config } from '../config';
 
@@ -20,6 +23,7 @@ interface CreateVirtueFormProps {
 
 const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({ onVirtueCreated }) => {
   const theme = useTheme();
+  const { isAuthenticated, user, login } = useAuth();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +31,11 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({ onVirtueCreated }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+
     if (!content.trim()) return;
 
     setLoading(true);
@@ -37,9 +46,10 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({ onVirtueCreated }) 
       const createResponse = await fetch(`${config.API_URL}/api/virtues`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Important for sending auth cookies
         body: JSON.stringify({
           content: content.trim(),
-          userId: 'user1',
+          userId: user?.id,
         }),
       });
 
@@ -49,7 +59,9 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({ onVirtueCreated }) 
       }
 
       // Fetch updated virtues
-      const virtuesResponse = await fetch(`${config.API_URL}/api/virtues`);
+      const virtuesResponse = await fetch(`${config.API_URL}/api/virtues`, {
+        credentials: 'include'
+      });
       const virtuesData = await virtuesResponse.json();
 
       if (virtuesData.success && virtuesData.data.length > 0) {
@@ -65,6 +77,34 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({ onVirtueCreated }) 
       setLoading(false);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <Card 
+        sx={{ 
+          mb: 2, 
+          boxShadow: theme.shadows[3],
+          borderRadius: 2,
+        }}
+      >
+        <CardContent>
+          <Box sx={{ textAlign: 'center', py: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Sign in to share your thoughts
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={login}
+              startIcon={<LoginIcon />}
+              sx={{ mt: 1 }}
+            >
+              Sign In
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card 

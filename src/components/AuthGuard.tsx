@@ -1,7 +1,8 @@
 import { Box, Button, Typography } from "@mui/material";
-import LoginIcon from '@mui/icons-material/Login';
 import { useAuth } from "../contexts/AuthContext";
+import LoginIcon from "@mui/icons-material/Login";
 
+// src/components/AuthGuard.tsx
 export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, login } = useAuth();
   
