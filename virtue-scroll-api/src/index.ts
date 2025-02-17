@@ -14,7 +14,7 @@ const getCorsHeaders = (allowedOrigin: string, request: Request) => {
 	return {
 		'Access-Control-Allow-Origin': responseOrigin,
 		'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-		'Access-Control-Allow-Headers': 'Content-Type',
+		'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 		'Access-Control-Max-Age': '86400',
 		'Access-Control-Allow-Credentials': 'true',
 	};
@@ -171,6 +171,106 @@ export default {
 					JSON.stringify({
 						success: false,
 						error: 'Failed to create virtue',
+					}),
+					{
+						status: 500,
+						headers: {
+							'Content-Type': 'application/json',
+							...corsHeaders,
+						},
+					}
+				);
+			}
+		});
+
+		// Add user
+		router.post('/api/users', async (request) => {
+			try {
+				const body = (await request.json()) as { [key: string]: string };
+				const { username, display_name, avatar_url, email, id } = body;
+
+				if (!username || !display_name || !email) {
+					return new Response(
+						JSON.stringify({
+							success: false,
+							error: 'Username, display_name, and email are required',
+						}),
+						{
+							status: 400,
+							headers: {
+								'Content-Type': 'application/json',
+								...corsHeaders,
+							},
+						}
+					);
+				}
+
+				const { success } = await db
+					.prepare(
+						`
+            INSERT INTO users (id, username, display_name, avatar_url, email, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            `
+					)
+					.bind(id, username, display_name, avatar_url, email, new Date().toISOString())
+					.run();
+
+				if (!success) {
+					throw new Error('Failed to insert user');
+				}
+
+				return new Response(JSON.stringify({ success: true }), {
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
+				});
+			} catch (error) {
+				console.error('Error creating user:', error);
+				return new Response(
+					JSON.stringify({
+						success: false,
+						error: 'Failed to create user',
+					}),
+					{
+						status: 500,
+						headers: {
+							'Content-Type': 'application/json',
+							...corsHeaders,
+						},
+					}
+				);
+			}
+		});
+
+		// Get user by id
+		router.get('/api/users/:id', async (request) => {
+			try {
+				const id = new URL(request.url).pathname.split('/')[3];
+				const { results } = await db
+					.prepare(
+						`
+            SELECT 
+              *
+            FROM users
+            WHERE id = ?
+            `
+					)
+					.bind(id)
+					.all();
+
+				return new Response(JSON.stringify({ success: true, data: results[0] }), {
+					headers: {
+						'Content-Type': 'application/json',
+						...corsHeaders,
+					},
+				});
+			} catch (error) {
+				console.error('Error fetching user:', error);
+				return new Response(
+					JSON.stringify({
+						success: false,
+						error: 'Failed to fetch user',
 					}),
 					{
 						status: 500,

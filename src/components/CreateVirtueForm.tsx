@@ -50,7 +50,7 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
         credentials: "include",
         body: JSON.stringify({
           content: content.trim(),
-          userId: user?.id,
+          userId: user?.sub,
         }),
       });
 

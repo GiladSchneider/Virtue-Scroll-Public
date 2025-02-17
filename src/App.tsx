@@ -5,6 +5,8 @@ import { Layout } from "./components";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import MyProfile from "./pages/MyProfile";
+import CompleteProfile from "./pages/CompleteProfile";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Auth0Provider } from "@auth0/auth0-react";
 
 const theme = createTheme({
@@ -39,8 +41,23 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
+              <Route
+                path="/complete-profile"
+                element={
+                  <ProtectedRoute requireComplete={false}>
+                    <CompleteProfile />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/profile/:username" element={<ProfilePage />} />
-              <Route path="/me" element={<MyProfile />} />
+              <Route
+                path="/me"
+                element={
+                  <ProtectedRoute>
+                    <MyProfile />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<div>Not found</div>} />
             </Route>
           </Routes>

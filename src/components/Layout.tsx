@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -20,9 +20,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 
 const Layout = () => {
   const theme = useTheme();
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Function to check if a route is active
   const isActiveRoute = (path: string) => location.pathname === path;
@@ -186,28 +185,27 @@ const Layout = () => {
                 },
                 transform: "scale(1.5)",
               }}
+              onClick={() => console.log("Create new virtue")}
             >
               <Create />
             </IconButton>
           </Tooltip>
 
-          <Tooltip title={isAuthenticated ? "Profile" : "Sign In"}>
-            <IconButton
-              onClick={() => {
-                if (isAuthenticated && user) {
-                  navigate(`/me`);
-                } else {
-                  loginWithRedirect();
-                }
-              }}
-              color={isActiveRoute("/me") ? "primary" : "default"}
-              sx={{
-                transform: isActiveRoute("/me") ? "scale(1.5)" : "none",
-                transition: "transform 0.2s",
-              }}
+          <Tooltip title={"Profile"}>
+            <Link
+              to={"/me"}
+              style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Person />
-            </IconButton>
+              <IconButton
+                color={isActiveRoute("/me") ? "primary" : "default"}
+                sx={{
+                  transform: isActiveRoute("/me") ? "scale(1.5)" : "none",
+                  transition: "transform 0.2s",
+                }}
+              >
+                <Person />
+              </IconButton>
+            </Link>
           </Tooltip>
         </Box>
       </Paper>
