@@ -38,20 +38,11 @@ export const createOrUpdateUser = async (
 export const getUser = async (id: string): Promise<ourUser | null> => {
   try {
     const response = await fetch(`${config.API_URL}/api/users/${id}`);
-
-    // Log the response status and headers
-    console.log("Response Status:", response.status);
-    console.log("Response Headers:", response.headers);
-
     const data = await response.json();
-
-    // Log the entire data response
-    console.log("Response Data:", data);
 
     if (!data.success) {
       throw new Error(data.error || "Failed to fetch user");
     }
-
     if (!data.data) {
       return null;
     }
@@ -84,7 +75,6 @@ export const isProfileComplete = async (
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.info("isProfileComplete: User not found");
         return false;
       }
       throw new Error(`API returned status ${response.status}`);
@@ -92,7 +82,6 @@ export const isProfileComplete = async (
 
     const data = await response.json();
     if (!data.success) {
-      console.warn("isProfileComplete: API returned success: false");
       return false;
     }
     if (!data.data) {
@@ -100,16 +89,11 @@ export const isProfileComplete = async (
     }
 
     const user = data.data as User;
-    console.log("isProfileComplete: User data:", user);
     const isComplete = Boolean(
       user.id &&
         user.username?.trim() &&
         user.display_name?.trim() &&
         user.email?.trim(),
-    );
-
-    console.log(
-      `isProfileComplete: Profile ${isComplete ? "is" : "is not"} complete`,
     );
 
     return isComplete;
