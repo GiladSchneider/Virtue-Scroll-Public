@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { LoginCard, CompleteProfileForm } from "../components";
+import { LoginCard, CompleteProfileForm, ProfileDashboard } from "../components";
 import { CircularProgress } from "@mui/material";
 import { getIdFromSub, isProfileComplete } from "../helpers";
 
@@ -50,9 +50,8 @@ const MyProfile = () => {
     return <CompleteProfileForm />;
   }
 
-  return (
-    <div>Profile is complete</div>
-  );
+  return <ProfileDashboard />;
+  
 };
 
 export default MyProfile;

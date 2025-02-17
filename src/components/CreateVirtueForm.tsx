@@ -1,4 +1,3 @@
-// CreateVirtueForm.tsx
 import React, { useState } from "react";
 import {
   Card,
@@ -6,24 +5,33 @@ import {
   TextField,
   Button,
   Box,
-  CircularProgress,
   Typography,
+  CircularProgress,
+  Alert,
+  IconButton,
   useTheme,
 } from "@mui/material";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import CampaignIcon from "@mui/icons-material/Campaign";
+import {
+  Campaign as CampaignIcon,
+  Close as CloseIcon,
+  AccountBalance,
+} from "@mui/icons-material";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Virtue } from "../types";
-import { config } from "../config";
 import { useNavigate } from "react-router-dom";
+import { config } from "../config";
 import { getIdFromSub } from "../helpers";
+import type { Virtue } from "../types";
 
 interface CreateVirtueFormProps {
   onVirtueCreated: (virtue: Virtue) => void;
+  onClose?: () => void;
 }
+
+const MAX_LENGTH = 300;
 
 const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
   onVirtueCreated,
+  onClose,
 }) => {
   const theme = useTheme();
   const { isAuthenticated, user } = useAuth0();
@@ -34,96 +42,97 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!isAuthenticated) {
-      navigate("/me")
+      navigate("/me");
       return;
     }
 
-    if (!content.trim()) return;
+    const trimmedContent = content.trim();
+    if (!trimmedContent) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      // Create virtue
-      const createResponse = await fetch(`${config.API_URL}/api/virtues`, {
+      const response = await fetch(`${config.API_URL}/api/virtues`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          content: content.trim(),
+          content: trimmedContent,
           userId: getIdFromSub(user?.sub),
         }),
       });
 
-      const createData = await createResponse.json();
-      if (!createData.success) {
-        throw new Error(createData.error || "Failed to create virtue");
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || "Failed to create virtue");
       }
 
-      // Fetch updated virtues
-      const virtuesResponse = await fetch(`${config.API_URL}/api/virtues`, {
-        credentials: "include",
-      });
-      const virtuesData = await virtuesResponse.json();
-
-      if (virtuesData.success && virtuesData.data.length > 0) {
-        onVirtueCreated(virtuesData.data[0]);
-      }
-
-      // Reset form
       setContent("");
+      onVirtueCreated(data.data);
+      onClose?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create virtue");
-      console.error("Error creating virtue:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const remainingChars = MAX_LENGTH - content.length;
+  const isOverLimit = remainingChars < 0;
+
   return (
     <Card
+      elevation={0}
       sx={{
-        mb: 2,
-        boxShadow: theme.shadows[3],
+        border: 1,
+        borderColor: "divider",
         borderRadius: 2,
       }}
     >
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <AccountBalanceIcon
-              sx={{
-                color: theme.palette.primary.main,
-                mr: 2,
-                fontSize: 40,
-              }}
-            />
-            <Typography variant="h6" color="textSecondary">
-              Share A Thought
-            </Typography>
-          </Box>
+      <CardContent sx={{ p: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <AccountBalance
+            sx={{
+              color: theme.palette.primary.main,
+              mr: 2,
+              fontSize: 40,
+            }}
+          />
+          <Typography variant="h6" color="text.secondary">
+            Share a Thought
+          </Typography>
+          {onClose && (
+            <IconButton onClick={onClose} size="small">
+              <CloseIcon />
+            </IconButton>
+          )}
+        </Box>
 
+        <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
             multiline
             rows={4}
-            variant="outlined"
             placeholder="What's on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             disabled={loading}
+            error={isOverLimit || !!error}
+            helperText={error}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2,
-                "&.Mui-focused fieldset": {
-                  borderColor: theme.palette.primary.main,
-                },
+                backgroundColor: theme.palette.background.paper,
               },
             }}
-            error={!!error}
-            helperText={error}
           />
 
           <Box
@@ -134,14 +143,18 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
               alignItems: "center",
             }}
           >
-            <Typography variant="caption" color="textSecondary">
-              {content.length}/300
+            <Typography
+              variant="caption"
+              color={isOverLimit ? "error" : "text.secondary"}
+            >
+              {300 - remainingChars}/300
             </Typography>
+
             <Button
               variant="contained"
               color="primary"
               type="submit"
-              disabled={!content.trim() || loading}
+              disabled={!content.trim() || loading || isOverLimit}
               endIcon={
                 loading ? <CircularProgress size={20} /> : <CampaignIcon />
               }
@@ -155,10 +168,16 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
               {!isAuthenticated
                 ? "Login to Share"
                 : loading
-                ? "Reflecting..."
-                : "Share Thought"}
+                  ? "Reflecting..."
+                  : "Share Thought"}
             </Button>
           </Box>
+
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
         </form>
       </CardContent>
     </Card>
