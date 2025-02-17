@@ -1,20 +1,14 @@
 IN PROGRESS:
 
-
-
 TODO:
 feature - Add ability to search tweets
 
-enhance - remove tooltips from bottom row
 enhance - POST methods should require authentication
 enhance - clean up secrets
 enhance - make custom auth0 login screen
 enhance - make tweets come in random order
 enhance - add a bunch of fake data
 
-bug - scroll down on home page then click profile page when not logged in
-bug - sign in
-bug - button at bottom to write does not work
 bug - tweets are not limited to 300 chars
 bug - add favicon, change react + vite + ts in header
 
@@ -26,3 +20,7 @@ And call it a day when the time comes!
 CLOSED:
 enhance - get user info from jwt and use that to populate User info if possible (NOT POSSIBLE)
 bug - after signing in, should auto redirect to "complete-profile" page, not home. Also, button should say "complete profile to tweet"
+bug - scroll down on home page then click profile page when not logged in
+enhance - remove tooltips from bottom row (WONTFIX)
+bug - sign in
+bug - button at bottom to write does not work
