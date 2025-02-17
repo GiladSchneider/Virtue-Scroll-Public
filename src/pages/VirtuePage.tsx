@@ -194,6 +194,10 @@ const VirtuePage = () => {
                 fontSize: "1.25rem",
                 lineHeight: 1.6,
                 mb: 3,
+                overflowWrap: "break-word",
+                wordBreak: "break-word",
+                hyphens: "auto",
+                maxWidth: "100%",
               }}
             >
               {virtue.content}
