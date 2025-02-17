@@ -40,7 +40,11 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
       throw new Error(data.error || "Failed to fetch user");
     }
 
-    console.log(data);
+    console.log("data.data", data.data);
+
+    if (!data.data) {
+      return null;
+    }
 
     return {
       id: data.data.id,
@@ -61,8 +65,8 @@ export const isProfileComplete = async (
 ): Promise<boolean> => {
   if (!user) return false;
 
-  // Check if user is in the d1 db
   const response = await fetch(`${config.API_URL}/api/users/${user.sub}`);
   const data = await response.json();
-  return !!data.username;
+  console.log("!!data.data", !!data.data);
+  return !!data.data;
 };

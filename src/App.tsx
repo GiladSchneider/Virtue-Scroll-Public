@@ -53,7 +53,7 @@ function App() {
               <Route
                 path="/me"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireComplete={true}>
                     <MyProfile />
                   </ProtectedRoute>
                 }

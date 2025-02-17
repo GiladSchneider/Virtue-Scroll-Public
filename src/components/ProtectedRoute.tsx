@@ -18,10 +18,7 @@ interface ProtectedRouteProps {
   requireComplete?: boolean;
 }
 
-const ProtectedRoute = ({
-  children,
-  requireComplete = true,
-}: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading, user, loginWithRedirect } = useAuth0();
   const location = useLocation();
 
