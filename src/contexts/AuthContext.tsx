@@ -47,7 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = () => {
-    const loginUrl = 'https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/login/virtuescroll.com';
+    const appDomain = window.location.origin;
+    const loginUrl = `https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/login/${encodeURIComponent(appDomain)}`;
     window.location.href = loginUrl;
   };
 
