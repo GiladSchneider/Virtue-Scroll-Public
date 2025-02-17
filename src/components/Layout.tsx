@@ -76,7 +76,7 @@ const Layout = () => {
             <Tooltip title="View on GitHub">
               <IconButton
                 component="a"
-                href="https://github.com/giladschneider/virtue-scroller"
+                href="https://github.com/GiladSchneider/Virtue-Scroll-Public"
                 target="_blank"
                 size="small"
               >
