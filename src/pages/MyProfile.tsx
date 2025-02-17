@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const Profile = () => {
@@ -20,7 +20,7 @@ const Profile = () => {
 
         setAccessToken(accessToken);
 
-        const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
+        const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user?.sub}`;
 
         const metadataResponse = await fetch(userDetailsByIdUrl, {
           headers: {
