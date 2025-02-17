@@ -150,7 +150,7 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
               }}
             >
               {!isAuthenticated
-                ? "Login/Sign Up to Share"
+                ? "Login to Share"
                 : loading
                 ? "Reflecting..."
                 : "Share Thought"}

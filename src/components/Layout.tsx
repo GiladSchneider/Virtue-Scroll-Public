@@ -115,7 +115,7 @@ const Layout = () => {
               endIcon={<LoginIcon />}
               sx={{ textTransform: "none" }}
             >
-              Login / Sign Up
+              Login
             </Button>
           )}
         </Toolbar>
