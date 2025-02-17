@@ -22,13 +22,18 @@ const Profile = () => {
         return;
       }
       const data = await getUser(user.sub);
+
+      if (!data) {
+        return;
+      }
+
       setUserInfo(data);
     };
 
     fetchUserInfo();
   }, [user?.sub]);
 
-  if (isLoading || !userInfo) {
+  if (isLoading) {
     return (
       <Container
         maxWidth="sm"
