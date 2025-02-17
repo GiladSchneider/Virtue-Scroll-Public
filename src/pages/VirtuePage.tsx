@@ -132,12 +132,12 @@ const VirtuePage = () => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
             <IconButton
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/')}
               sx={{ color: "text.secondary" }}
             >
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6">Back to</Typography>
+            <Typography variant="h6">VirtueScroll.com</Typography>
           </Box>
         </Paper>
 
