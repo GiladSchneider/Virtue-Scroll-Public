@@ -208,8 +208,6 @@ export default {
 					);
 				}
 
-				const values = [id, username, display_name, avatar_url || 'todo', email, new Date().toISOString()];
-				console.log('values 8ygbnji', values);
 				const { success } = await db
 					.prepare(
 						`
@@ -217,14 +215,7 @@ export default {
             VALUES (?, ?, ?, ?, ?, ?)
             `
 					)
-					.bind(
-						id || 'tempid1',
-						username || 'tempid2',
-						display_name || 'temp3',
-						avatar_url || 'temp4',
-						email || 'temp5',
-						new Date().toISOString()
-					)
+					.bind(id, username, display_name, avatar_url || 'temp4', email, new Date().toISOString())
 					.run();
 
 				if (!success) {
