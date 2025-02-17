@@ -112,6 +112,10 @@ const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
     );
   }
 
+  console.log("User", user);
+  console.log("isProfileComplete", isProfileComplete(user));
+  console.log("requireComplete", requireComplete);
+  console.log("location.pathname", location.pathname);
   if (requireComplete && !isProfileComplete(user)) {
     if (location.pathname !== "/complete-profile") {
       return <Navigate to="/complete-profile" />;
