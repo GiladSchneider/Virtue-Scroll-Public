@@ -1,6 +1,4 @@
 IN PROGRESS:
-enhance - add readme
-enhance - write resume section
 
 TODO:
 feature - Add ability to search tweets
@@ -23,3 +21,5 @@ enhance - make tweets come in random order
 devx - code sweep through code and clean up console logs, unnecessary CSS, etc
 enhance - remove random selection of tweets - its cool but makes the app untestable by new people
 enhance - add a bunch of fake data
+enhance - add readme
+enhance - write resume section
