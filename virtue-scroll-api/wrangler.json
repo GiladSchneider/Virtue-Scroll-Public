@@ -32,6 +32,19 @@
 					"database_id": "ab537267-886b-4f7e-b2e8-6187c7d1ece1"
 				}
 			]
+		},
+		"production": {
+			"vars": {
+				"ENVIRONMENT": "production",
+				"ALLOWED_ORIGIN": "https://www.virtuescroll.com"
+			},
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "virtue-scroll-db",
+					"database_id": "ab537267-886b-4f7e-b2e8-6187c7d1ece1"
+				}
+			]
 		}
 	}
 }

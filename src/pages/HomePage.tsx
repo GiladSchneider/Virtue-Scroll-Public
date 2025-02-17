@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Box, CircularProgress, Typography, Fade } from '@mui/material';
 import { VirtueList, CreateVirtueForm } from '../components';
 import { Virtue } from '../types';
@@ -8,27 +8,60 @@ const HomePage = () => {
   const [virtues, setVirtues] = useState<Virtue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const fetchVirtues = useCallback(async () => {
+    try {
+      const response = await fetch(`${config.API_URL}/api/virtues`);
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch virtues');
+      }
+      
+      return data.data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      return [];
+    }
+  }, []);
+
+  const loadInitialVirtues = useCallback(async () => {
+    setLoading(true);
+    const initialVirtues = await fetchVirtues();
+    setVirtues(initialVirtues);
+    setLoading(false);
+  }, [fetchVirtues]);
+
+  const loadMoreVirtues = useCallback(async () => {
+    if (isLoadingMore) return;
+
+    setIsLoadingMore(true);
+    const newVirtues = await fetchVirtues();
+    setVirtues(prev => [...prev, ...newVirtues]);
+    setIsLoadingMore(false);
+  }, [isLoadingMore, fetchVirtues]);
+
+  // Infinite scroll effect
   useEffect(() => {
-    const fetchVirtues = async () => {
-      try {
-        const response = await fetch(`${config.API_URL}/api/virtues`);
-        const data = await response.json();
-        
-        if (!data.success) {
-          throw new Error(data.error || 'Failed to fetch virtues');
-        }
-        
-        setVirtues(data.data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
+    const handleScroll = () => {
+      // Check if user is near the bottom of the page
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >= 
+        document.documentElement.offsetHeight
+      ) {
+        loadMoreVirtues();
       }
     };
 
-    fetchVirtues();
-  }, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadMoreVirtues]);
+
+  // Initial load
+  useEffect(() => {
+    loadInitialVirtues();
+  }, [loadInitialVirtues]);
 
   const handleVirtueCreated = (newVirtue: Virtue) => {
     setVirtues(prev => [newVirtue, ...prev]);
@@ -65,9 +98,14 @@ const HomePage = () => {
 
   return (
     <Fade in timeout={500}>
-      <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+      <Box sx={{ maxWidth: 600, mx: 'auto', position: 'relative' }}>
         <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
         <VirtueList virtues={virtues} />
+        {isLoadingMore && (
+          <Box display="flex" justifyContent="center" mt={2}>
+            <CircularProgress size={30} thickness={4} />
+          </Box>
+        )}
       </Box>
     </Fade>
   );
