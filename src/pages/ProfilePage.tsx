@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -13,23 +13,25 @@ import {
   Divider,
   useTheme,
   Alert,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CalendarMonth as CalendarIcon,
   Campaign as CampaignIcon,
   PersonOutline as PersonIcon,
-} from "@mui/icons-material";
-import { VirtueList } from "../components";
-import { Virtue, User } from "../types";
-import { config } from "../config";
+} from '@mui/icons-material';
+import { VirtueList } from '../components';
+import { Virtue, User } from '../types';
+import { config } from '../config';
 
 const ProfilePage = () => {
   const theme = useTheme();
   const { username } = useParams<{ username: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [virtues, setVirtues] = useState<Virtue[]>([]);
+  const [profileData, setProfileData] = useState<{
+    user: User | null;
+    virtues: Virtue[];
+  }>({ user: null, virtues: [] });
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -37,32 +39,46 @@ const ProfilePage = () => {
 
       try {
         setLoading(true);
-
-        // First, fetch the user data
-        const userResponse = await fetch(
-          `${config.API_URL}/api/users/${username}`,
+        const response = await fetch(
+          `${config.API_URL}/api/users/${username}/virtues`
         );
-        const userData = await userResponse.json();
+        const data = await response.json();
 
-        if (!userData.success) {
-          throw new Error(userData.error || "Failed to fetch user data");
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to fetch profile data');
         }
 
-        setUser(userData.data);
-
-        // Then fetch their virtues
-        const virtuesResponse = await fetch(
-          `${config.API_URL}/api/users/${username}/virtues`,
-        );
-        const virtuesData = await virtuesResponse.json();
-
-        if (!virtuesData.success) {
-          throw new Error(virtuesData.error || "Failed to fetch virtues");
+        if (data.data.length > 0) {
+          const userData = {
+            id: data.data[0].user_id,
+            username: data.data[0].username,
+            display_name: data.data[0].display_name,
+            avatar_url: data.data[0].avatar_url,
+            created_at: data.data[0].created_at,
+            email: data.data[0].email,
+          };
+          setProfileData({
+            user: userData,
+            virtues: data.data,
+          });
+        } else {
+          // Handle case where user exists but has no virtues
+          const userResponse = await fetch(
+            `${config.API_URL}/api/users/${username}`
+          );
+          const userData = await userResponse.json();
+          
+          if (userData.success && userData.data) {
+            setProfileData({
+              user: userData.data,
+              virtues: [],
+            });
+          } else {
+            setProfileData({ user: null, virtues: [] });
+          }
         }
-
-        setVirtues(virtuesData.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -75,15 +91,8 @@ const ProfilePage = () => {
     return <Navigate to="/" replace />;
   }
 
-  // centered circular progress
   if (loading) {
-    return (
-      <Container maxWidth="md">
-        <Box sx={{ mt: 4, textAlign: "center" }}>
-          <Skeleton variant="circular" width={40} height={40} />
-        </Box>
-      </Container>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (error) {
@@ -96,6 +105,8 @@ const ProfilePage = () => {
     );
   }
 
+  const { user, virtues } = profileData;
+
   if (!user) {
     return (
       <Container maxWidth="md" sx={{ mt: 4 }}>
@@ -106,9 +117,9 @@ const ProfilePage = () => {
     );
   }
 
-  const joinDate = new Date(user.created_at).toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
+  const joinDate = new Date(user.created_at).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
   });
 
   return (
@@ -120,17 +131,17 @@ const ProfilePage = () => {
             mb: 4,
             borderRadius: 2,
             border: 1,
-            borderColor: "divider",
+            borderColor: 'divider',
           }}
         >
           <CardContent sx={{ p: 4 }}>
-            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
               <Avatar
                 sx={{
                   width: 80,
                   height: 80,
                   bgcolor: theme.palette.primary.main,
-                  fontSize: "2rem",
+                  fontSize: '2rem',
                 }}
               >
                 {user.display_name?.[0]}
@@ -148,7 +159,7 @@ const ProfilePage = () => {
                   @{user.username}
                 </Typography>
 
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
                   <Chip
                     icon={<CalendarIcon />}
                     label={`Joined ${joinDate}`}
@@ -158,7 +169,7 @@ const ProfilePage = () => {
                   <Chip
                     icon={<CampaignIcon />}
                     label={`${virtues.length} ${
-                      virtues.length === 1 ? "Virtue" : "Virtues"
+                      virtues.length === 1 ? 'Virtue' : 'Virtues'
                     }`}
                     variant="outlined"
                     color="primary"
@@ -170,7 +181,7 @@ const ProfilePage = () => {
 
             <Divider sx={{ my: 3 }} />
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <PersonIcon color="action" />
               <Typography variant="body2" color="text.secondary">
                 {user.display_name}
@@ -195,5 +206,43 @@ const ProfilePage = () => {
     </Container>
   );
 };
+
+const ProfileSkeleton = () => (
+  <Container maxWidth="md">
+    <Box sx={{ mt: 4, mb: 6 }}>
+      <Card
+        elevation={0}
+        sx={{
+          mb: 4,
+          borderRadius: 2,
+          border: 1,
+          borderColor: 'divider',
+        }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          <Box sx={{ display: 'flex', gap: 3 }}>
+            <Skeleton variant="circular" width={80} height={80} />
+            <Box sx={{ flex: 1 }}>
+              <Skeleton variant="text" width="60%" height={40} />
+              <Skeleton variant="text" width="30%" height={24} />
+              <Box sx={{ mt: 2 }}>
+                <Skeleton variant="text" width="40%" height={32} />
+              </Box>
+            </Box>
+          </Box>
+          <Divider sx={{ my: 3 }} />
+          <Skeleton variant="text" width="70%" />
+        </CardContent>
+      </Card>
+
+      <Skeleton variant="text" width="20%" height={32} sx={{ mb: 2 }} />
+      <Stack spacing={2}>
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} variant="rectangular" height={120} sx={{ borderRadius: 2 }} />
+        ))}
+      </Stack>
+    </Box>
+  </Container>
+);
 
 export default ProfilePage;

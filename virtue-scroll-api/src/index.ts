@@ -31,6 +31,10 @@ export default {
       const username = new URL(request.url).pathname.split('/')[3];
       return virtueController.getUserVirtues(username);
     });
+    router.get('/api/virtues/:id', (request) => {
+      const id = new URL(request.url).pathname.split('/')[3];
+      return virtueController.getVirtue(id);
+    });
     router.post('/api/virtues', (request) => virtueController.createVirtue(request));
 
     // User routes

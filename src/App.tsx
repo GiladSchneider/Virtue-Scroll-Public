@@ -1,4 +1,3 @@
-// App.tsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import { Layout } from "./components";
@@ -6,7 +5,9 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import MyProfile from "./pages/MyProfile";
 import CompleteProfile from "./pages/CompleteProfile";
+import VirtuePage from "./pages/VirtuePage";
 import { Auth0Provider } from "@auth0/auth0-react";
+
 
 const theme = createTheme({
   palette: {
@@ -41,6 +42,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />              
               <Route path="/profile/:username" element={<ProfilePage />} />
+              <Route path="/virtue/:virtueId" element={<VirtuePage />} />
               <Route path="/me" element={<MyProfile />} />
               <Route path="/complete-profile" element={<CompleteProfile />} />
               <Route path="*" element={<div>Not found</div>} />

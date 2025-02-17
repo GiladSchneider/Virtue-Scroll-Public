@@ -7,6 +7,16 @@ export class VirtueController {
       private corsHeaders: HeadersInit
     ) {}
   
+    async getVirtue(id: string): Promise<Response> {
+      try {
+        const virtue = await this.virtueService.getVirtue(id);
+        return this.jsonResponse({ success: true, data: virtue });
+      } catch (error) {
+        console.error('Error fetching virtue:', error);
+        return this.errorResponse('Failed to fetch virtue');
+      }
+    }
+    
     async getVirtues(): Promise<Response> {
       try {
         const virtues = await this.virtueService.getAllVirtues();

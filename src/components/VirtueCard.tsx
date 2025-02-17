@@ -1,12 +1,11 @@
 import {
   Card,
-  CardContent,
   Stack,
   Avatar,
   Typography,
   Box,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Virtue } from "../types";
 
 interface VirtueCardProps {
@@ -14,6 +13,8 @@ interface VirtueCardProps {
 }
 
 const VirtueCard = ({ virtue }: VirtueCardProps) => {
+  const navigate = useNavigate();
+  
   const formattedDate = new Date(virtue.created_at).toLocaleDateString(
     "en-US",
     {
@@ -30,19 +31,37 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
   const username = virtue.username;
   const initial = displayName[0]?.toUpperCase();
 
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking user elements
+  };
+
+  const handleCardClick = () => {
+    navigate(`/virtue/${virtue.id}`);
+  };
+
   return (
     <Card
+      onClick={handleCardClick}
       sx={{
         borderRadius: 2,
         width: "100%",
+        cursor: 'pointer',
+        transition: 'all 0.2s ease-in-out',
+        '&:hover': {          
+          boxShadow: 3,          
+        },
+        '&:active': {
+          transform: 'translateY(0px)',
+        }
       }}
     >
-      <CardContent>
+      <Box sx={{ p: 2 }}>
         <Stack spacing={2}>
           <Stack direction="row" spacing={2} alignItems="flex-start">
             <Avatar
               component={Link}
               to={`/profile/${username}`}
+              onClick={handleUserClick}
               sx={{
                 bgcolor: "primary.main",
                 width: 40,
@@ -51,6 +70,10 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
                 fontWeight: 500,
                 textDecoration: "none",
                 flexShrink: 0,
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                },
               }}
             >
               {initial}
@@ -62,42 +85,42 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
                 alignItems="baseline"
                 sx={{ mb: 0.5 }}
               >
-                <>
-                  <Link
-                    to={`/profile/${username}`}
-                    style={{
-                      textDecoration: "none",
-                      color: "inherit",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle1"
-                      component="span"
-                      sx={{
-                        fontWeight: 600,
-                        color: "text.primary",
-                        "&:hover": {
-                          color: "primary.main",
-                        },
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {displayName}
-                    </Typography>
-                  </Link>
+                <Link
+                  to={`/profile/${username}`}
+                  onClick={handleUserClick}
+                  style={{
+                    textDecoration: "none",
+                    color: "inherit",
+                    maxWidth: "100%",
+                  }}
+                >
                   <Typography
-                    variant="caption"
+                    variant="subtitle1"
+                    component="span"
                     sx={{
-                      color: "text.secondary",
-                      flexShrink: 0,
+                      fontWeight: 600,
+                      color: "text.primary",
+                      transition: 'color 0.2s ease',
+                      "&:hover": {
+                        color: "primary.main",
+                      },
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    • {formattedDate}
+                    {displayName}
                   </Typography>
-                </>
+                </Link>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    flexShrink: 0,
+                  }}
+                >
+                  • {formattedDate}
+                </Typography>
               </Stack>
 
               <Typography
@@ -115,7 +138,7 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
             </Box>
           </Stack>
         </Stack>
-      </CardContent>
+      </Box>
     </Card>
   );
 };

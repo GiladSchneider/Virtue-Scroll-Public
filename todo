@@ -1,18 +1,18 @@
 IN PROGRESS:
+enhance - make custom auth0 login screen
+enhance - add a bunch of fake data
+enhance - add readme
+enhance - write resume section
+bug - tweets are not limited to 300 chars
+devx - code sweep through code and clean up console logs, unnecessary CSS, etc
 
 TODO:
 feature - Add ability to search tweets
 
 enhance - POST methods should require authentication
 enhance - clean up secrets
-enhance - make custom auth0 login screen
 enhance - make tweets come in random order
-enhance - add a bunch of fake data
-enhance - add readme
 
-bug - tweets are not limited to 300 chars
-
-devx - code sweep through code and clean up console logs, unnecessary CSS, etc
 
 And call it a day when the time comes!
 
