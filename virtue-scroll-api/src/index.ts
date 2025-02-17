@@ -208,6 +208,8 @@ export default {
 					);
 				}
 
+				const values = [id, username, display_name, avatar_url || 'todo', email, new Date().toISOString()];
+				console.log('values 8ygbnji', values);
 				const { success } = await db
 					.prepare(
 						`
