@@ -1,28 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Router } from './router';
 
 interface Env {
 	DB: D1Database;
 	ENVIRONMENT: string;
-	ALLOWED_ORIGIN: string;
+	ALLOWED_ORIGINS: any;
 }
 
 // Function to get CORS headers based on environment
-const getCorsHeaders = (allowedOrigin: string, request: Request) => {
+const getCorsHeaders = (allowedOrigin: any, request: Request) => {
+	const allowedOrigins = allowedOrigin.origins;
 	const origin = request.headers.get('Origin');
-	const responseOrigin = origin && origin === allowedOrigin ? origin : allowedOrigin;
 
-	return {
-		'Access-Control-Allow-Origin': responseOrigin,
+	const headers = {
+		'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
 		'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 		'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 		'Access-Control-Max-Age': '86400',
 		'Access-Control-Allow-Credentials': 'true',
 	};
+
+	return headers;
 };
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
-		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGIN, request);
+		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGINS, request);
 		const db = env.DB;
 
 		// Handle CORS preflight requests

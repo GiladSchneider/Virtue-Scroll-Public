@@ -2,6 +2,6 @@
 
 interface Env {
 	ENVIRONMENT: 'production' | 'development';
-	ALLOWED_ORIGIN: 'https://virtuescroll.com' | 'http://localhost:5173';
+	ALLOWED_ORIGINS: { origins: ['https://virtuescroll.com', 'https://www.virtuescroll.com'] } | { origins: ['http://localhost:5173'] };
 	DB: D1Database;
 }

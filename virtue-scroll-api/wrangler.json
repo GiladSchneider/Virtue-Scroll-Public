@@ -17,13 +17,13 @@
 	],
 	"vars": {
 		"ENVIRONMENT": "production",
-		"ALLOWED_ORIGIN": "https://virtuescroll.com"
+		"ALLOWED_ORIGINS": { "origins": ["https://virtuescroll.com", "https://www.virtuescroll.com"] }
 	},
 	"env": {
 		"development": {
 			"vars": {
 				"ENVIRONMENT": "development",
-				"ALLOWED_ORIGIN": "http://localhost:5173"
+				"ALLOWED_ORIGINS": { "origins": ["http://localhost:5173"] }
 			},
 			"d1_databases": [
 				{
@@ -36,7 +36,7 @@
 		"production": {
 			"vars": {
 				"ENVIRONMENT": "production",
-				"ALLOWED_ORIGIN": "https://virtuescroll.com"
+				"ALLOWED_ORIGINS": { "origins": ["https://virtuescroll.com", "https://www.virtuescroll.com"] }
 			},
 			"d1_databases": [
 				{
