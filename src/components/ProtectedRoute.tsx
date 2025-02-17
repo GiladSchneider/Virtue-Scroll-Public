@@ -27,6 +27,7 @@ const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
   useEffect(() => {
     const checkProfile = async () => {
       if (!user?.sub) {
+        setProfileCompleteLoading(false);
         return;
       }
 
@@ -37,7 +38,7 @@ const ProtectedRoute = ({ children, requireComplete }: ProtectedRouteProps) => {
     };
 
     checkProfile();
-  }, [user?.sub]);
+  }, [user]);
 
   if (isLoading || profileCompleteLoading) {
     return (
