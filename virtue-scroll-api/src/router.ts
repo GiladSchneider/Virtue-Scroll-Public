@@ -1,4 +1,4 @@
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS';
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | '*';
 type RouteHandler = (request: Request, params?: Record<string, string>) => Promise<Response>;
 
 interface Route {
@@ -31,13 +31,17 @@ export class Router {
 		this.add('OPTIONS', pattern, handler);
 	}
 
+	all(pattern: string, handler: RouteHandler) {
+		this.add('*', pattern, handler);
+	}
+
 	async handle(request: Request): Promise<Response> {
 		const url = new URL(request.url);
 		const path = url.pathname;
 		const method = request.method as HttpMethod;
 
 		for (const route of this.routes) {
-			if (method === route.method) {
+			if (route.method === '*' || method === route.method) {
 				const match = path.match(route.pattern);
 				if (match) {
 					return route.handler(request);

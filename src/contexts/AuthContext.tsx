@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { config } from '../config';
 
@@ -35,39 +34,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         credentials: 'include'
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          setUser(data.data);
-        }
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        setUser({
+          id: data.data.id,
+          email: data.data.email,
+          displayName: data.data.display_name,
+          username: data.data.username,
+          avatarUrl: data.data.avatar_url
+        });
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
 
   const login = () => {
-    // Construct the login URL with the current URL as the redirect
     const currentUrl = window.location.href;
-    const loginUrl = `https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/login?redirect_url=${encodeURIComponent(currentUrl)}`;
-    window.location.href = loginUrl;
+    window.location.href = `${config.API_URL}/auth/login?redirect_url=${encodeURIComponent(currentUrl)}`;
   };
 
   const logout = async () => {
     try {
-      // First, call our backend logout endpoint
-      await fetch(`${config.API_URL}/api/auth/logout`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-      
-      // Then redirect to Cloudflare Access logout
       const currentUrl = window.location.href;
-      const logoutUrl = `https://virtuescroll.cloudflareaccess.com/cdn-cgi/access/logout?redirect_url=${encodeURIComponent(currentUrl)}`;
-      window.location.href = logoutUrl;
-      
+      window.location.href = `${config.API_URL}/auth/logout?redirect_url=${encodeURIComponent(currentUrl)}`;
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
