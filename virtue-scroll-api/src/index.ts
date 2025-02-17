@@ -29,6 +29,12 @@ const getCorsHeaders = (allowedOrigin: string, request: Request) => {
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGIN, request);
+		const db = env.DB;
+		console.log('##############################################');
+		console.log('ENV', env);
+		console.log('DB:', db);
+		console.log('Request:', request);
+		console.log('##############################################');
 
 		// Handle CORS preflight requests
 		if (request.method === 'OPTIONS') {
@@ -42,8 +48,9 @@ export default {
 		// Get all virtues
 		router.get('/api/virtues', async () => {
 			try {
-				const { results } = await env.DB.prepare(
-					`
+				const { results } = await db
+					.prepare(
+						`
           SELECT 
             v.*,
             u.username,
@@ -54,7 +61,8 @@ export default {
           ORDER BY v.created_at DESC
           LIMIT 50
         `
-				).all();
+					)
+					.all();
 
 				return new Response(JSON.stringify({ success: true, data: results }), {
 					headers: {
@@ -84,8 +92,9 @@ export default {
 		router.get('/api/users/:username/virtues', async (request) => {
 			try {
 				const username = new URL(request.url).pathname.split('/')[3];
-				const { results } = await env.DB.prepare(
-					`
+				const { results } = await db
+					.prepare(
+						`
           SELECT 
             v.*,
             u.username,
@@ -97,7 +106,7 @@ export default {
           ORDER BY v.created_at DESC
           LIMIT 50
         `
-				)
+					)
 					.bind(username)
 					.all();
 
@@ -146,12 +155,13 @@ export default {
 					);
 				}
 
-				const { success } = await env.DB.prepare(
-					`
+				const { success } = await db
+					.prepare(
+						`
           INSERT INTO virtues (id, content, user_id)
           VALUES (?, ?, ?)
         `
-				)
+					)
 					.bind(crypto.randomUUID(), content, userId)
 					.run();
 

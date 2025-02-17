@@ -4,17 +4,24 @@ import {
   Box, 
   Typography, 
   Avatar, 
-  Paper, 
   CircularProgress,
-  Divider,
-  Grid
+  Chip,
+  Fade,
+  Paper,
+  Container,
+  useTheme,
+  useMediaQuery,
+  Stack
 } from '@mui/material';
-import { CalendarMonth, LocationOn } from '@mui/icons-material';
-import VirtueList from '../components/VirtueList';
+import { CalendarMonth } from '@mui/icons-material';
+import { VirtueList } from '../components';
 import { Virtue, User } from '../types';
 import { config } from '../config';
+import CampaignIcon from '@mui/icons-material/Campaign';
 
 const ProfilePage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { username } = useParams<{ username: string }>();
   const [virtues, setVirtues] = useState<Virtue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +40,6 @@ const ProfilePage = () => {
         }
         
         if (data.data.length > 0) {
-          // Get user data from the first virtue
           const userData = {
             id: data.data[0].user_id,
             username: data.data[0].username,
@@ -59,7 +65,12 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" mt={4}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '50vh' 
+      }}>
         <CircularProgress />
       </Box>
     );
@@ -67,16 +78,31 @@ const ProfilePage = () => {
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <Typography color="error">{error}</Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '50vh',
+        p: 3
+      }}>
+        <Typography color="error" variant="h6" align="center">
+          {error}
+        </Typography>
       </Box>
     );
   }
 
   if (!user) {
     return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <Typography>User not found</Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '50vh' 
+      }}>
+        <Typography variant="h6" color="text.secondary">
+          User not found
+        </Typography>
       </Box>
     );
   }
@@ -87,69 +113,99 @@ const ProfilePage = () => {
   });
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-      {/* Profile Header */}
-      <Paper sx={{ mb: 3, p: 3 }}>
-        <Grid container spacing={3}>
-          <Grid item>
-            <Avatar 
-              sx={{ width: 120, height: 120 }}
-              alt={user.displayName}
+    <Fade in timeout={500}>
+      <Container maxWidth="md" sx={{ pt: 3, pb: 6 }}>
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            mb: 4,
+            p: { xs: 2, sm: 4 },
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider'
+          }}
+        >
+          <Box sx={{ 
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'center' : 'flex-start',
+            gap: 3
+          }}>
+            <Avatar
+              sx={{
+                width: { xs: 80, sm: 100 },
+                height: { xs: 80, sm: 100 },
+                bgcolor: 'primary.main',
+                fontSize: { xs: '2rem', sm: '2.5rem' }
+              }}
             >
               {user.displayName[0]}
             </Avatar>
-          </Grid>
-          <Grid item xs>
-            <Typography variant="h4" gutterBottom>
-              {user.displayName}
-            </Typography>
-            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-              @{user.username}
-            </Typography>
-            <Box sx={{ mt: 2, display: 'flex', gap: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CalendarMonth color="action" />
-                <Typography variant="body2" color="text.secondary">
-                  Joined {joinDate}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <LocationOn color="action" />
-                <Typography variant="body2" color="text.secondary">
-                  Earth
-                </Typography>
-              </Box>
+
+            <Box sx={{ 
+              flex: 1,
+              textAlign: isMobile ? 'center' : 'left'
+            }}>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 700,
+                  mb: 0.5,
+                  fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                }}
+              >
+                {user.displayName}
+              </Typography>
+
+              <Typography
+                variant="subtitle1"
+                color="text.secondary"
+                sx={{ mb: 2 }}
+              >
+                @{user.username}
+              </Typography>
+
+              <Stack 
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={1}
+                sx={{ 
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: 1
+                }}
+              >
+                <Chip
+                  icon={<CalendarMonth sx={{ fontSize: 16 }} />}
+                  label={`Joined ${joinDate}`}
+                  variant="outlined"
+                  size="small"
+                  sx={{ 
+                    borderRadius: 1,
+                    '& .MuiChip-label': { px: 1 }
+                  }}
+                />
+                <Chip
+                  icon={<CampaignIcon sx={{ fontSize: 16 }} />}
+                  label={`${virtues.length} ${virtues.length === 1 ? 'Virtue' : 'Virtues'}`}
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  sx={{ 
+                    borderRadius: 1,
+                    '& .MuiChip-label': { px: 1 }
+                  }}
+                />
+              </Stack>
             </Box>
-          </Grid>
-        </Grid>
-      </Paper>
+          </Box>
+        </Paper>
 
-      {/* Stats Section */}
-      <Paper sx={{ mb: 3, p: 2 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <Typography variant="h6">{virtues.length}</Typography>
-            <Typography color="text.secondary">Virtues</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="h6">0</Typography>
-            <Typography color="text.secondary">Following</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="h6">0</Typography>
-            <Typography color="text.secondary">Followers</Typography>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      <Divider sx={{ mb: 3 }} />
-
-      {/* Virtues List */}
-      <Typography variant="h6" gutterBottom>
-        Virtues
-      </Typography>
-      <VirtueList virtues={virtues} />
-    </Box>
+        <Box sx={{ mb: 2, px: { xs: 1, sm: 2 } }}>
+          <VirtueList virtues={virtues} />
+        </Box>
+      </Container>
+    </Fade>
   );
 };
 

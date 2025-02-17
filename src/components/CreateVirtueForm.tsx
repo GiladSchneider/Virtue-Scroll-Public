@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   CardContent, 
   TextField, 
   Button, 
   Box, 
-  CircularProgress,
-  Alert
+  CircularProgress, 
+  Typography,
+  useTheme
 } from '@mui/material';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import CampaignIcon from '@mui/icons-material/Campaign';
 import { Virtue } from '../types';
 import { config } from '../config';
 
@@ -15,77 +18,126 @@ interface CreateVirtueFormProps {
   onVirtueCreated: (virtue: Virtue) => void;
 }
 
-const CreateVirtueForm = ({ onVirtueCreated }: CreateVirtueFormProps) => {
+const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({ onVirtueCreated }) => {
+  const theme = useTheme();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
     
+    if (!content.trim()) return;
+
     setLoading(true);
     setError(null);
-    
+
     try {
-      const response = await fetch(`${config.API_URL}/api/virtues`, {
+      // Create virtue
+      const createResponse = await fetch(`${config.API_URL}/api/virtues`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           content: content.trim(),
           userId: 'user1',
         }),
       });
 
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to create virtue');
+      const createData = await createResponse.json();
+      if (!createData.success) {
+        throw new Error(createData.error || 'Failed to create virtue');
       }
 
-      const virtueResponse = await fetch(`${config.API_URL}/api/virtues`);
-      const virtuesData = await virtueResponse.json();
+      // Fetch updated virtues
+      const virtuesResponse = await fetch(`${config.API_URL}/api/virtues`);
+      const virtuesData = await virtuesResponse.json();
+
       if (virtuesData.success && virtuesData.data.length > 0) {
         onVirtueCreated(virtuesData.data[0]);
       }
 
+      // Reset form
       setContent('');
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to create virtue');
-      console.error('Error creating virtue:', error);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create virtue');
+      console.error('Error creating virtue:', err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card sx={{ mb: 2 }}>
+    <Card 
+      sx={{ 
+        mb: 2, 
+        boxShadow: theme.shadows[3],
+        borderRadius: 2,
+      }}
+    >
       <CardContent>
         <form onSubmit={handleSubmit}>
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <AccountBalanceIcon 
+              sx={{ 
+                color: theme.palette.primary.main, 
+                mr: 2,
+                fontSize: 40
+              }} 
+            />
+            <Typography variant="h6" color="textSecondary">
+              Share A Thought
+            </Typography>
+          </Box>
+
           <TextField
             fullWidth
             multiline
-            rows={3}
+            rows={4}
             variant="outlined"
             placeholder="What's on your mind?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             disabled={loading}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+                '&.Mui-focused fieldset': {
+                  borderColor: theme.palette.primary.main,
+                },
+              },
+            }}
+            error={!!error}
+            helperText={error}
           />
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+
+          <Box 
+            sx={{ 
+              mt: 2, 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center' 
+            }}
+          >
+            <Typography 
+              variant="caption" 
+              color="textSecondary"
+            >
+              {content.length}/300
+            </Typography>
             <Button
               variant="contained"
               color="primary"
               type="submit"
               disabled={!content.trim() || loading}
+              endIcon={loading ? <CircularProgress size={20} /> : <CampaignIcon />}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                px: 3,
+                py: 1,
+              }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Post Virtue'}
+              {loading ? 'Reflecting...' : 'Share Thought'}
             </Button>
           </Box>
         </form>

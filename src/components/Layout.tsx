@@ -1,5 +1,4 @@
-import { Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
   AppBar, 
   Toolbar, 
@@ -7,68 +6,171 @@ import {
   Container, 
   Box,
   IconButton,
-  Fab
+  Tooltip,
+  useTheme,
+  useMediaQuery,
+  Paper
 } from '@mui/material';
-import { Home, Person, Edit } from '@mui/icons-material';
+import { Home, Person, Create, GitHub } from '@mui/icons-material';
+import ThreePIcon from '@mui/icons-material/ThreeP';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 const Layout = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const location = useLocation();
+
+  // Function to check if a route is active
+  const isActiveRoute = (path: string) => location.pathname === path;
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'grey.50' }}>
-      <AppBar 
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh',
+      bgcolor: 'grey.50'
+    }}>
+      {/* Top AppBar */}
+      <AppBar
         position="fixed" 
         elevation={0}
         sx={{ 
           bgcolor: 'background.paper',
           borderBottom: 1,
-          borderColor: 'grey.200'
-        }}
-      >
-        <Toolbar sx={{ maxWidth: 'lg', width: '100%', mx: 'auto' }}>
+          borderColor: 'grey.200',          
+        }}        
+      >       
+        <Toolbar sx={{ px: { xs: 1, sm: 2 }, display: 'flex', justifyContent: 'space-around' }}>
+          <Tooltip title="Made by Gilad Schneider">
+            <IconButton 
+              component="a"
+              href="https://www.giladschneider.com"
+              target="_blank"
+            >
+              <AutoFixHighIcon />
+            </IconButton>
+          </Tooltip>
+          
           <Typography
             variant="h6"
             component={Link}
             to="/"
             sx={{ 
               textDecoration: 'none', 
-              color: 'text.primary',
-              flexGrow: 1,
-              fontWeight: 600
+              color: 'primary.main',
+              fontWeight: 700,
+              letterSpacing: '-0.5px',
+              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
             }}
           >
-            Virtue Scroll
+            Virtue            
+            Scroll
+            <ThreePIcon />
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton component={Link} to="/" color="inherit">
-              <Home />
+          
+          {/* GitHub Link */}
+          <Tooltip title="View on GitHub">
+            <IconButton 
+              component="a"
+              href="https://github.com/yourusername/virtue-scroll"
+              target="_blank"              
+            >
+              <GitHub />
             </IconButton>
-            <IconButton component={Link} to="/profile/johndoe" color="inherit">
-              <Person />
-            </IconButton>
-          </Box>
+          </Tooltip>
         </Toolbar>
       </AppBar>
-      <Toolbar />
+
+      {/* Main Content */}
+      <Toolbar /> {/* Spacing for fixed AppBar */}
       <Container 
         component="main" 
         maxWidth="lg" 
         sx={{ 
           flex: 1, 
           py: 3,
-          position: 'relative'
+          px: { xs: 1, sm: 2 }
         }}
       >
         <Outlet />
-        <Fab 
-          color="primary" 
-          sx={{ 
-            position: 'fixed',
-            bottom: 24,
-            right: 24
+      </Container>
+
+      {/* Bottom Navigation Bar */}
+      <Paper 
+        elevation={3}
+        sx={{ 
+          position: 'fixed',
+          bottom: 3,
+          left: 50,
+          right: 50,
+          zIndex: theme.zIndex.appBar,
+          borderRadius: '12px',
+          bgcolor: 'background.paper',
+          border: 1,
+          borderColor: 'grey.200',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            py: 1,
+            px: 2,
+            maxWidth: 'sm',
+            mx: 'auto'
           }}
         >
-          <Edit />
-        </Fab>
-      </Container>
+          <Tooltip title="Home">
+            <IconButton 
+              component={Link} 
+              to="/"
+              color={isActiveRoute('/') ? 'primary' : 'default'}
+              sx={{ 
+                transform: isActiveRoute('/') ? 'scale(1.5)' : 'none',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <Home />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="New Virtue">
+            <IconButton 
+              color="primary"
+              sx={{ 
+                bgcolor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
+                },
+                transform: 'scale(1.3)'
+              }}
+            >
+              <Create />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Profile">
+            <IconButton 
+              component={Link} 
+              to="/profile/johndoe"
+              color={isActiveRoute('/profile/johndoe') ? 'primary' : 'default'}
+              sx={{ 
+                transform: isActiveRoute('/profile/johndoe') ? 'scale(1.5)' : 'none',
+                transition: 'transform 0.2s'
+              }}
+            >
+              <Person />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Paper>
+
+      {/* Bottom spacing to account for fixed navigation */}
+      <Toolbar sx={{ minHeight: { xs: '64px', sm: '64px' } }} />
     </Box>
   );
 };

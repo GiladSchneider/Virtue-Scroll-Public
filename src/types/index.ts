@@ -9,13 +9,9 @@ export interface User {
 export interface Virtue {
   id: string;
   content: string;
-  userId: string;
-  user?: {
-    username: string;
-    displayName: string;
-    avatarUrl?: string;
-  };
-  createdAt: string;
-  likeCount: number;
-  isLiked?: boolean;
+  user_id: string;
+  created_at: string;
+  username: string;
+  avatar_url: string;
+  display_name: string;
 }

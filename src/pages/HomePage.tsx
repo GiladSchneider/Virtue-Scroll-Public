@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography, Fade } from '@mui/material';
 import { VirtueList, CreateVirtueForm } from '../components';
 import { Virtue } from '../types';
 import { config } from '../config';
@@ -36,25 +36,40 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <CircularProgress />
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+        <CircularProgress size={40} thickness={4} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <Typography color="error">{error}</Typography>
+      <Box 
+        display="flex" 
+        justifyContent="center" 
+        alignItems="center" 
+        minHeight="50vh"
+        p={2}
+      >
+        <Typography 
+          color="error" 
+          variant="h6" 
+          textAlign="center"
+          sx={{ maxWidth: 400 }}
+        >
+          {error}
+        </Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-      <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
-      <VirtueList virtues={virtues} />
-    </Box>
+    <Fade in timeout={500}>
+      <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+        <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
+        <VirtueList virtues={virtues} />
+      </Box>
+    </Fade>
   );
 };
 
