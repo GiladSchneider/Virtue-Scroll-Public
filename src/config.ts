@@ -11,9 +11,7 @@ const environments: Record<string, EnvironmentConfig> = {
   },
 };
 
-// Determine the current environment
 const getCurrentEnvironment = (): string => {
-  // Check if we're running in production based on the URL
   if (typeof window !== 'undefined') {
     if (window.location.hostname === 'www.virtuescroll.com') {
       return 'production';

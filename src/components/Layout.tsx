@@ -86,7 +86,7 @@ const Layout = () => {
       </AppBar>
 
       {/* Main Content */}
-      <Toolbar /> {/* Spacing for fixed AppBar */}
+      <Toolbar />
       <Container 
         component="main" 
         maxWidth="lg" 
@@ -104,7 +104,7 @@ const Layout = () => {
         elevation={3}
         sx={{ 
           position: 'fixed',
-          bottom: 3,
+          bottom: 5,
           left: 50,
           right: 50,
           zIndex: theme.zIndex.appBar,
@@ -126,7 +126,7 @@ const Layout = () => {
         >
           <Tooltip title="Home">
             <IconButton 
-              component={Link} 
+              component={Link}
               to="/"
               color={isActiveRoute('/') ? 'primary' : 'default'}
               sx={{ 
@@ -147,8 +147,8 @@ const Layout = () => {
                 '&:hover': {
                   bgcolor: 'primary.dark',
                 },
-                transform: 'scale(1.3)'
-              }}
+                transform: 'scale(1.5)'
+              }}              
             >
               <Create />
             </IconButton>
