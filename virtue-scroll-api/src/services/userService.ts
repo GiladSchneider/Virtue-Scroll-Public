@@ -7,9 +7,9 @@ export class UserService {
 		const { success } = await this.db
 			.prepare(
 				`
-          INSERT INTO users (id, username, display_name, avatar_url, email, created_at)
-          VALUES (?, ?, ?, ?, ?, ?)
-        `
+				INSERT INTO users (id, username, display_name, avatar_url, email, created_at)
+				VALUES (?, ?, ?, ?, ?, ?)
+				`
 			)
 			.bind(user.id, user.username, user.display_name, user.avatar_url || null, user.email, new Date().toISOString())
 			.run();
@@ -21,12 +21,6 @@ export class UserService {
 
 	async getUserById(id: string): Promise<User | null> {
 		const result = await this.db.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
-
-		return result as User | null;
-	}
-
-	async getUserByUsername(username: string): Promise<User | null> {
-		const result = await this.db.prepare('SELECT * FROM users WHERE username = ?').bind(username).first();
 
 		return result as User | null;
 	}

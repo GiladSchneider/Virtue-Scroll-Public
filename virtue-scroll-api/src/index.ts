@@ -1,11 +1,10 @@
 import { Router } from './router';
 import { Env } from './types';
-import { getCorsHeaders } from './cors';
 import { VirtueService } from './services/virtueService';
 import { UserService } from './services/userService';
 import { VirtueController } from './controllers/virtueController';
 import { UserController } from './controllers/userController';
-import { handleProtectedRoute } from './auth';
+import { handleProtectedRoute, getCorsHeaders } from './auth';
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
