@@ -217,7 +217,14 @@ export default {
             VALUES (?, ?, ?, ?, ?, ?)
             `
 					)
-					.bind(id, username, display_name, avatar_url || 'todo', email, new Date().toISOString())
+					.bind(
+						id || 'tempid1',
+						username || 'tempid2',
+						display_name || 'temp3',
+						avatar_url || 'temp4',
+						email || 'temp5',
+						new Date().toISOString()
+					)
 					.run();
 
 				if (!success) {
