@@ -1,5 +1,5 @@
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 import {
   AppBar,
   Toolbar,
@@ -14,7 +14,7 @@ import {
   Dialog,
   DialogContent,
   useMediaQuery,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Home as HomeIcon,
   Person as PersonIcon,
@@ -23,10 +23,10 @@ import {
   Login as LoginIcon,
   Logout as LogoutIcon,
   AutoFixHigh as AutoFixHighIcon,
-} from '@mui/icons-material';
-import ThreePIcon from '@mui/icons-material/ThreeP';
-import { CreateVirtueForm } from '../components';
-import { useState } from 'react';
+} from "@mui/icons-material";
+import ThreePIcon from "@mui/icons-material/ThreeP";
+import { CreateVirtueForm } from "../components";
+import { useState } from "react";
 
 const Layout = () => {
   const theme = useTheme();
@@ -34,7 +34,7 @@ const Layout = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
   const location = useLocation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Function to check if a route is active
   const isActiveRoute = (path: string) => location.pathname === path;
@@ -57,25 +57,27 @@ const Layout = () => {
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      minHeight: '100vh',
-      bgcolor: 'grey.50'
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        bgcolor: "grey.50",
+      }}
+    >
       {/* Top AppBar */}
-      <AppBar 
-        position="fixed" 
+      <AppBar
+        position="fixed"
         elevation={0}
         sx={{
-          bgcolor: 'background.paper',
+          bgcolor: "background.paper",
           borderBottom: 1,
-          borderColor: 'divider',
+          borderColor: "divider",
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, sm: 4 } }}>
+        <Toolbar sx={{ justifyContent: "space-between", px: { xs: 2, sm: 4 } }}>
           {/* Left section */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>            
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Tooltip title="Made By Gilad Schneider">
               <IconButton
                 component="a"
@@ -103,13 +105,13 @@ const Layout = () => {
             component={Link}
             to="/"
             sx={{
-              textDecoration: 'none',
-              color: 'primary.main',
+              textDecoration: "none",
+              color: "primary.main",
               fontWeight: 700,
-              letterSpacing: '-0.5px',
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
-              display: 'flex',
-              alignItems: 'center',
+              letterSpacing: "-0.5px",
+              fontSize: { xs: "1.25rem", sm: "1.5rem" },
+              display: "flex",
+              alignItems: "center",
               gap: 1,
             }}
           >
@@ -118,15 +120,15 @@ const Layout = () => {
           </Typography>
 
           {/* Right section */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {isAuthenticated ? (
               <Button
                 variant="outlined"
                 onClick={() => logout()}
                 startIcon={<LogoutIcon />}
-                sx={{ 
-                  textTransform: 'none',
-                  fontWeight: 500
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 500,
                 }}
               >
                 Logout
@@ -136,9 +138,9 @@ const Layout = () => {
                 variant="contained"
                 onClick={() => loginWithRedirect()}
                 startIcon={<LoginIcon />}
-                sx={{ 
-                  textTransform: 'none',
-                  fontWeight: 500
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 500,
                 }}
               >
                 Login
@@ -149,12 +151,12 @@ const Layout = () => {
       </AppBar>
 
       {/* Main Content */}
-      <Box 
-        component="main" 
-        sx={{ 
+      <Box
+        component="main"
+        sx={{
           flexGrow: 1,
-          pt: '64px', // Height of AppBar
-          minHeight: '100vh'
+          pt: "64px", // Height of AppBar
+          minHeight: "100vh",
         }}
       >
         <Container maxWidth="lg" sx={{ py: 3 }}>
@@ -166,24 +168,24 @@ const Layout = () => {
       <Paper
         elevation={3}
         sx={{
-          position: 'fixed',
+          position: "fixed",
           bottom: 16,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'auto',
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "auto",
           maxWidth: 320,
-          borderRadius: '50px',
+          borderRadius: "50px",
           zIndex: theme.zIndex.appBar,
-          bgcolor: 'background.paper',
+          bgcolor: "background.paper",
           border: 1,
-          borderColor: 'divider',
+          borderColor: "divider",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
             px: 3,
             py: 1,
             gap: 3,
@@ -193,10 +195,10 @@ const Layout = () => {
             <IconButton
               component={Link}
               to="/"
-              color={isActiveRoute('/') ? 'primary' : 'default'}
+              color={isActiveRoute("/") ? "primary" : "default"}
               sx={{
-                transition: 'all 0.2s',
-                transform: isActiveRoute('/') ? 'scale(1.1)' : 'none',
+                transition: "all 0.2s",
+                transform: isActiveRoute("/") ? "scale(1.1)" : "none",
               }}
             >
               <HomeIcon />
@@ -207,14 +209,14 @@ const Layout = () => {
             <IconButton
               onClick={handleOpenDialog}
               sx={{
-                bgcolor: 'primary.main',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
+                bgcolor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  bgcolor: "primary.dark",
                 },
                 width: 48,
                 height: 48,
-                transition: 'all 0.2s',
+                transition: "all 0.2s",
               }}
             >
               <CreateIcon />
@@ -225,10 +227,10 @@ const Layout = () => {
             <IconButton
               component={Link}
               to="/me"
-              color={isActiveRoute('/me') ? 'primary' : 'default'}
+              color={isActiveRoute("/me") ? "primary" : "default"}
               sx={{
-                transition: 'all 0.2s',
-                transform: isActiveRoute('/me') ? 'scale(1.1)' : 'none',
+                transition: "all 0.2s",
+                transform: isActiveRoute("/me") ? "scale(1.1)" : "none",
               }}
             >
               <PersonIcon />
@@ -245,8 +247,10 @@ const Layout = () => {
         maxWidth="sm"
         fullWidth
         // make paper transparent and too small to tap outside
-        slotProps={{ paper: { sx: { bgcolor: 'transparent', boxShadow: 'none' } } }}
-      >       
+        slotProps={{
+          paper: { sx: { bgcolor: "transparent", boxShadow: "none" } },
+        }}
+      >
         <DialogContent sx={{ px: 3, pb: 3 }}>
           <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
         </DialogContent>

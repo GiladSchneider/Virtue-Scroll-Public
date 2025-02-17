@@ -33,7 +33,7 @@ const VirtuePage = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `${config.API_URL}/api/virtues/${virtueId}`,
+          `${config.API_URL}/api/virtues/${virtueId}`
         );
         const data = await response.json();
 
@@ -58,7 +58,7 @@ const VirtuePage = () => {
     try {
       await navigator.share({
         title: `Check out this Virtue by ${virtue?.display_name}`,
-        url: window.location.href
+        url: window.location.href,
       });
     } catch (err) {
       // Handle share error or user cancellation
@@ -113,7 +113,7 @@ const VirtuePage = () => {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    },
+    }
   );
 
   return (
@@ -132,7 +132,7 @@ const VirtuePage = () => {
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
             <IconButton
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               sx={{ color: "text.secondary" }}
             >
               <ArrowBackIcon />
@@ -226,7 +226,7 @@ const VirtuePage = () => {
               </Tooltip>
             </Box>
           </CardContent>
-        </Card>        
+        </Card>
       </Box>
     </Container>
   );

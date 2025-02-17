@@ -33,7 +33,7 @@ const CompleteProfile = () => {
       const accessToken = await getAccessTokenSilently();
 
       await createOrUpdateUser(user, accessToken, formData);
-      
+
       navigate("/me");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update profile");

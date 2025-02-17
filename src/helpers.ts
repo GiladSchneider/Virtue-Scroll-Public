@@ -4,12 +4,12 @@ import { config } from "./config";
 
 export const getIdFromSub = (sub: string | undefined): string => {
   return sub ? sub.split("|")[1] : "";
-}
+};
 
 export const createOrUpdateUser = async (
   auth0User: Auth0User | undefined,
   accessToken: string,
-  formData: { username: string; display_name: string; email: string },
+  formData: { username: string; display_name: string; email: string }
 ): Promise<void> => {
   try {
     const response = await fetch(`${config.API_URL}/api/users`, {
@@ -61,9 +61,7 @@ export const getUser = async (id: string): Promise<ourUser | null> => {
   }
 };
 
-export const isProfileComplete = async (
-  userId: string,
-): Promise<boolean> => {
+export const isProfileComplete = async (userId: string): Promise<boolean> => {
   try {
     if (!userId) {
       return false;
@@ -93,7 +91,7 @@ export const isProfileComplete = async (
       user.id &&
         user.username?.trim() &&
         user.display_name?.trim() &&
-        user.email?.trim(),
+        user.email?.trim()
     );
 
     return isComplete;

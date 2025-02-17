@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { LoginCard, CompleteProfileForm, ProfileDashboard } from "../components";
+import {
+  LoginCard,
+  CompleteProfileForm,
+  ProfileDashboard,
+} from "../components";
 import { CircularProgress } from "@mui/material";
 import { getIdFromSub, isProfileComplete } from "../helpers";
 
-const MyProfile = () => {  
-  window.scrollTo({ top: 0, left: 0});
+const MyProfile = () => {
+  window.scrollTo({ top: 0, left: 0 });
   const { isAuthenticated, isLoading, user } = useAuth0();
   const [isProfileLoaded, setIsProfileLoaded] = useState<boolean>(false);
   const [isComplete, setIsComplete] = useState<boolean>(false);
@@ -29,7 +33,7 @@ const MyProfile = () => {
   // if loading, display a loading spinner
   if (isLoading || !isProfileLoaded) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <CircularProgress />
       </div>
     );
@@ -51,7 +55,6 @@ const MyProfile = () => {
   }
 
   return <ProfileDashboard />;
-  
 };
 
 export default MyProfile;

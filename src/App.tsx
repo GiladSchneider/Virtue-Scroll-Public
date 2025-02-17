@@ -8,7 +8,6 @@ import CompleteProfile from "./pages/CompleteProfile";
 import VirtuePage from "./pages/VirtuePage";
 import { Auth0Provider } from "@auth0/auth0-react";
 
-
 const theme = createTheme({
   palette: {
     mode: "light",
@@ -40,7 +39,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />              
+              <Route index element={<HomePage />} />
               <Route path="/profile/:username" element={<ProfilePage />} />
               <Route path="/virtue/:virtueId" element={<VirtuePage />} />
               <Route path="/me" element={<MyProfile />} />

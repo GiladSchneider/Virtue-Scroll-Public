@@ -5,10 +5,10 @@ import {
   Button,
   Box,
   Avatar,
-} from '@mui/material';
-import { useAuth0 } from '@auth0/auth0-react';
-import LoginIcon from '@mui/icons-material/Login';
-import ThreePIcon from '@mui/icons-material/ThreeP';
+} from "@mui/material";
+import { useAuth0 } from "@auth0/auth0-react";
+import LoginIcon from "@mui/icons-material/Login";
+import ThreePIcon from "@mui/icons-material/ThreeP";
 
 const LoginCard = () => {
   const { loginWithRedirect } = useAuth0();
@@ -22,20 +22,20 @@ const LoginCard = () => {
       elevation={0}
       sx={{
         maxWidth: 400,
-        mx: 'auto',
+        mx: "auto",
         borderRadius: 2,
         border: 1,
-        borderColor: 'divider',
+        borderColor: "divider",
       }}
     >
       <CardContent sx={{ p: 4 }}>
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Box sx={{ textAlign: "center", mb: 4 }}>
           <Avatar
             sx={{
               width: 56,
               height: 56,
-              bgcolor: 'primary.main',
-              mx: 'auto',
+              bgcolor: "primary.main",
+              mx: "auto",
               mb: 2,
             }}
           >
@@ -49,7 +49,7 @@ const LoginCard = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>                    
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Button
             fullWidth
             variant="contained"
@@ -58,7 +58,7 @@ const LoginCard = () => {
             startIcon={<LoginIcon />}
             sx={{
               py: 1.5,
-              textTransform: 'none',
+              textTransform: "none",
             }}
           >
             Continue with Email
@@ -69,9 +69,10 @@ const LoginCard = () => {
           variant="caption"
           color="text.secondary"
           align="center"
-          sx={{ mt: 3, display: 'block' }}
+          sx={{ mt: 3, display: "block" }}
         >
-          By continuing, you agree to our Terms of Service and Privacy Policy. Ok fine, we don't have those yet.
+          By continuing, you agree to our Terms of Service and Privacy Policy.
+          Ok fine, we don't have those yet.
         </Typography>
       </CardContent>
     </Card>

@@ -3,7 +3,6 @@ enhance - add a bunch of fake data
 enhance - add readme
 enhance - write resume section
 devx - code sweep through code and clean up console logs, unnecessary CSS, etc
-enhance - make tweets come in random order
 
 TODO:
 feature - Add ability to search tweets
@@ -22,3 +21,4 @@ bug - add favicon, change react + vite + ts in header
 enhance - make custom auth0 login screen
 bug - tweets should be limited to 300 chars
 enhance - POST methods should require authentication
+enhance - make tweets come in random order
