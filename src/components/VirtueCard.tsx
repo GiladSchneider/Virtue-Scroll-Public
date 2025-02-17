@@ -1,27 +1,26 @@
-import { Card, CardContent, CardHeader, Avatar, Typography, IconButton, Box } from '@mui/material';
-import { Favorite, FavoriteBorder, Share } from '@mui/icons-material';
+import { Card, CardContent, CardHeader, Avatar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { Virtue } from '../types';
+import type { Virtue } from '../types';
 
 interface VirtueCardProps {
   virtue: Virtue;
 }
 
 const VirtueCard = ({ virtue }: VirtueCardProps) => {
-  const [isLiked, setIsLiked] = useState(virtue.isLiked || false);
-  const [likeCount, setLikeCount] = useState(virtue.likeCount || 0);
-
-  const handleLikeClick = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-  };
+  // Format the date properly
+  const formattedDate = new Date(virtue.createdAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
   return (
     <Card>
       <CardHeader
         avatar={
-          <Avatar alt={virtue.user?.displayName}>
+          <Avatar>
             {virtue.user?.displayName?.[0] || '?'}
           </Avatar>
         }
@@ -30,7 +29,7 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
             to={`/profile/${virtue.user?.username}`}
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <Typography variant="subtitle1" component="span">
+            <Typography variant="subtitle1" component="span" fontWeight="bold">
               {virtue.user?.displayName}
             </Typography>
             <Typography 
@@ -43,25 +42,12 @@ const VirtueCard = ({ virtue }: VirtueCardProps) => {
             </Typography>
           </Link>
         }
-        subheader={new Date(virtue.createdAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
-        })}
+        subheader={formattedDate}
       />
       <CardContent>
-        <Typography variant="body1">{virtue.content}</Typography>
-        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={handleLikeClick} color={isLiked ? 'primary' : 'default'}>
-            {isLiked ? <Favorite /> : <FavoriteBorder />}
-          </IconButton>
-          <Typography variant="body2" color="text.secondary">
-            {likeCount}
-          </Typography>
-          <IconButton sx={{ ml: 1 }}>
-            <Share />
-          </IconButton>
-        </Box>
+        <Typography variant="body1">
+          {virtue.content}
+        </Typography>
       </CardContent>
     </Card>
   );

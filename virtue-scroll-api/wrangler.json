@@ -12,5 +12,8 @@
 			"database_name": "virtue-scroll-db",
 			"database_id": "8ff474e5-de1b-4c3e-90f9-06b789d202e8"
 		}
-	]
+	],
+	"vars": {
+		"ENVIRONMENT": "production"
+	}
 }

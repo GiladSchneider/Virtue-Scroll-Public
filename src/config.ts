@@ -1,7 +1,3 @@
-const isDevelopment = import.meta.env.DEV;
-
 export const config = {
-  apiUrl: isDevelopment 
-    ? 'http://localhost:8787'
-    : 'https://virtue-scroll-api.schneider-gilad.workers.dev'
+  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:8787'
 };
