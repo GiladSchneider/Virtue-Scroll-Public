@@ -1,18 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Router } from './router';
 
 interface Env {
 	DB: D1Database;
+	ENVIRONMENT: string;
 }
 
-const corsHeaders = {
-	'Access-Control-Allow-Origin': env.ENVIRONMENT === 'development' ? 'http://localhost:5173' : 'https://www.virtuescroll.com',
+// Function to get CORS headers based on environment
+const getCorsHeaders = (environment: string) => ({
+	'Access-Control-Allow-Origin': environment === 'development' ? 'http://localhost:5173' : 'https://www.virtuescroll.com',
 	'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 	'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 	'Access-Control-Max-Age': '86400',
-};
+});
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
+		const corsHeaders = getCorsHeaders(env.ENVIRONMENT);
+
 		// Handle CORS preflight requests
 		if (request.method === 'OPTIONS') {
 			return new Response(null, {
@@ -90,7 +95,6 @@ export default {
 						...corsHeaders,
 					},
 				});
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (error) {
 				return new Response(
 					JSON.stringify({
@@ -111,7 +115,7 @@ export default {
 		// Create new virtue
 		router.post('/api/virtues', async (request) => {
 			try {
-				const body = (await request.json()) as { content?: string; userId?: string };
+				const body = (await request.json()) as { content: string; userId: string };
 				const { content, userId } = body;
 
 				if (!content || !userId) {
@@ -149,7 +153,6 @@ export default {
 						...corsHeaders,
 					},
 				});
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (error) {
 				return new Response(
 					JSON.stringify({
