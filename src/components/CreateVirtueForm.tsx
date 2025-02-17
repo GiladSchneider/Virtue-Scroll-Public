@@ -33,7 +33,7 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
   onClose,
 }) => {
   const theme = useTheme();
-  const { isAuthenticated, user } = useAuth0();
+  const { isAuthenticated, user, getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,9 +53,13 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
     setError(null);
 
     try {
+      const token = await getAccessTokenSilently();
       const response = await fetch(`${config.API_URL}/api/virtues`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         credentials: "include",
         body: JSON.stringify({
           content: trimmedContent,
@@ -168,8 +172,8 @@ const CreateVirtueForm: React.FC<CreateVirtueFormProps> = ({
               {!isAuthenticated
                 ? "Login to Share"
                 : loading
-                  ? "Reflecting..."
-                  : "Share Thought"}
+                ? "Reflecting..."
+                : "Share Thought"}
             </Button>
           </Box>
 

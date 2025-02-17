@@ -2,15 +2,12 @@ IN PROGRESS:
 enhance - add a bunch of fake data
 enhance - add readme
 enhance - write resume section
-bug - tweets are not limited to 300 chars
 devx - code sweep through code and clean up console logs, unnecessary CSS, etc
+enhance - make tweets come in random order
 
 TODO:
 feature - Add ability to search tweets
-
-enhance - POST methods should require authentication
 enhance - clean up secrets
-enhance - make tweets come in random order
 
 And call it a day when the time comes!
 
@@ -23,3 +20,5 @@ bug - sign in
 bug - button at bottom to write does not work
 bug - add favicon, change react + vite + ts in header
 enhance - make custom auth0 login screen
+bug - tweets should be limited to 300 chars
+enhance - POST methods should require authentication
