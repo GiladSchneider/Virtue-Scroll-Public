@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { VirtueList, CreateVirtueForm } from '../components';
 import { Virtue } from '../types';
+import { config } from '../config';
 
 const HomePage = () => {
   const [virtues, setVirtues] = useState<Virtue[]>([]);
@@ -11,7 +12,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchVirtues = async () => {
       try {
-        const response = await fetch('http://localhost:8787/api/virtues');
+        const response = await fetch(`${config.API_URL}/api/virtues`);
         const data = await response.json();
         
         if (!data.success) {

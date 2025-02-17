@@ -23,12 +23,12 @@ const CreateVirtueForm = ({ onVirtueCreated }: CreateVirtueFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
-
+    
     setLoading(true);
     setError(null);
     
     try {
-      const response = await fetch(`${config.apiUrl}/api/virtues`, {
+      const response = await fetch(`${config.API_URL}/api/virtues`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const CreateVirtueForm = ({ onVirtueCreated }: CreateVirtueFormProps) => {
         throw new Error(data.error || 'Failed to create virtue');
       }
 
-      const virtueResponse = await fetch(`${config.apiUrl}/api/virtues`);
+      const virtueResponse = await fetch(`${config.API_URL}/api/virtues`);
       const virtuesData = await virtueResponse.json();
       if (virtuesData.success && virtuesData.data.length > 0) {
         onVirtueCreated(virtuesData.data[0]);

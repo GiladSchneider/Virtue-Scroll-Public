@@ -14,6 +14,13 @@
 		}
 	],
 	"vars": {
-		"ENVIRONMENT": "production"
+		"ENVIRONMENT": "production",
+		"ALLOWED_ORIGIN": "https://www.virtuescroll.com"
+	},
+	"dev": {
+		"vars": {
+			"ENVIRONMENT": "development",
+			"ALLOWED_ORIGIN": "http://localhost:5173"
+		}
 	}
 }

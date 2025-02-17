@@ -12,6 +12,7 @@ import {
 import { CalendarMonth, LocationOn } from '@mui/icons-material';
 import VirtueList from '../components/VirtueList';
 import { Virtue, User } from '../types';
+import { config } from '../config';
 
 const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
@@ -24,7 +25,7 @@ const ProfilePage = () => {
     const fetchProfileData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8787/api/users/${username}/virtues`);
+        const response = await fetch(`${config.API_URL}/api/users/${username}/virtues`);
         const data = await response.json();
         
         if (!data.success) {

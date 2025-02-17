@@ -4,11 +4,12 @@ import { Router } from './router';
 interface Env {
 	DB: D1Database;
 	ENVIRONMENT: string;
+	ALLOWED_ORIGIN: string;
 }
 
 // Function to get CORS headers based on environment
-const getCorsHeaders = (environment: string) => ({
-	'Access-Control-Allow-Origin': environment === 'development' ? 'http://localhost:5173' : 'https://www.virtuescroll.com',
+const getCorsHeaders = (allowedOrigin: string) => ({
+	'Access-Control-Allow-Origin': allowedOrigin,
 	'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 	'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 	'Access-Control-Max-Age': '86400',
@@ -16,7 +17,7 @@ const getCorsHeaders = (environment: string) => ({
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
-		const corsHeaders = getCorsHeaders(env.ENVIRONMENT);
+		const corsHeaders = getCorsHeaders(env.ALLOWED_ORIGIN);
 
 		// Handle CORS preflight requests
 		if (request.method === 'OPTIONS') {
