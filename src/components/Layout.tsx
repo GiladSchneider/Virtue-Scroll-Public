@@ -23,6 +23,7 @@ import {
   Login as LoginIcon,
   Logout as LogoutIcon,
   AutoFixHigh as AutoFixHighIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import ThreePIcon from "@mui/icons-material/ThreeP";
 import { CreateVirtueForm } from "../components";
@@ -232,11 +233,38 @@ const Layout = () => {
         maxWidth="sm"
         fullWidth
         slotProps={{
-          paper: { sx: { bgcolor: "transparent", boxShadow: "none" } },
+          backdrop: {
+            sx: {
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            },
+          },
+          paper: {
+            sx: {
+              bgcolor: "transparent",
+              boxShadow: "none",
+            },
+          },
         }}
       >
         <DialogContent sx={{ px: 3, pb: 3 }}>
-          <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
+          <Box sx={{ position: "relative" }}>
+            <IconButton
+              onClick={() => setIsDialogOpen(false)}
+              sx={{
+                position: "absolute",
+                right: 8,
+                top: 8,
+                bgcolor: "background.paper",
+                "&:hover": {
+                  bgcolor: "background.paper",
+                },
+              }}
+              size="small"
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+            <CreateVirtueForm onVirtueCreated={handleVirtueCreated} />
+          </Box>
         </DialogContent>
       </Dialog>
     </Box>
